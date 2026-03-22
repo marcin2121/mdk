@@ -14,7 +14,8 @@ Możliwości Instalatora Graficznego w przeglądarce:
 - **Zero-Config Template Generator**: Za pomocą interfejsu określasz dominujący pion biznesowy projektu (np. B2B, Portfolio, Lokalny Biznes).
 - **Zmienne Graficzne (Design Tokens)**: Definiujesz w locie z palety barw kolor podstawowy i wpisujesz nazwę aplikacji. Informacja zapisywana jest do ukrytego pliku konfiguracyjnego środowiska (`.molenda-setup`).
 - **Dynamic NPM Injection**: Server Action na dnie instalatora (oparta na `child_process.execAsync`) pobiera zdefiniowane dla szablonu pakiety niezbędne do jego działania ze środowiska NPM.
-- **FS Code Injection (Iniekcja Kodu Zewnętrznego)**: Używając Node.js `fs.writeFileSync(...)`, aplikacja dosłownie modyfikuje swój własny skompilowany plik `app/(public)/page.tsx` wklejając tam precyzyjnie oszlifowany kod uformowany we wskazanym Kolorze Twojego projektu!
+- **FS Code Injection (Iniekcja Kodu Zewnętrznego)**: Używając Node.js `fs.writeFileSync(...)`, aplikacja modyfikuje plik `app/(public)/page.tsx` wklejając tam precyzyjny kod szablonu.
+- **Narzędzia i Pakiety Deweloperskie (Showcase)**: Wbudowany instalator pozwala jednym kliknięciem doinstalować paczki takie jak Prisma, Drizzle, Zustand, Framer Motion czy generować skrypty Docker i m.in. Sonner Toaster.
 
 ## ⚙️ Wymagania Architektoniczne w Rdzeniu
 
@@ -43,15 +44,13 @@ Projekt dzieli się na silnie stypizowane, odporne na potężne wektory awarii b
 ```text
 mdk/
 ├── app/                        # Główne wejścia routing'owe Next.js App Router
-│   ├── (admin)/dashboard/      # Wektor zastrzeżony. Zabezpieczony weryfikacją Middleware. Pulpit CMS.
-│   └── (public)/page.tsx       # Plik polimofriczny. Nadpisywany bezpośrednio przez Setup CLI i Node.js!
+│   └── (public)/page.tsx       # Plik polimorficzny. Nadpisywany bezpośrednio przez Setup CLI i Node.js!
 ├── components/                 
 │   └── wizard/                 # Mroczny Interfejs (Graficzne CLI Setupu), uruchamiany tylko w trybie Nieskonfigurowanym
 ├── lib/
 │   ├── actions/                # Czyste Server Actions weryfikujące tożsamość użytkownika CMS
 │   ├── supabase/               # Implementacja wzorca Supabase SSR Server i Middleware
-│   └── templates/index.ts      # Kody źródłowe w obiekcie JSON przeznaczone do wstrzyknięcia do `page.tsx` w Setupie
-├── supabase/migrations/        # Pliki z kodem SQL narzucającym tabele oraz bezpieczeństwo (RLS)
+│   └── actions/setup-wizard.ts # Logika synchronizacji z mdk-registry i iniekcji kodu
 ├── .env.example                # Zbiór wymaganych kluczy URL i JWK (anon_key)
 ├── middleware.ts               # Główny zamek odrzucający intruzów z nieaktywnych tras
 └── .molenda-setup              # Osobisty ukryty znacznik stanu Frameworka (pojawia się po instalacji)
@@ -75,12 +74,8 @@ Wdrożenie projektu opiera się na innowacyjnym doświadczeniu "Z punktu zeroweg
    ```
    *(Uwaga: paczki zewnętrzne np. `three.js` czy `Framer Motion` wgrają się automatycznie dopiero poprzez Setup Wizard na podstawie Twojego wyboru!)*
 
-3. **Zbuduj połączenie Supabase:** 
-   Wykonaj kopię `.env.example` zgłaszając ją jako `.env.local` i wklej publiczne klucze uzyskane w API Settings z panelu projektu na Supabase:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL="https://[ID].supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhb..."
-   ```
+3. **Konfiguracja Env (.env.local):** 
+   Nie musisz tworzyć plików ręcznie! Graficzny instalator MDK (Krok 6) zapyta Cię o dane do API/Supabase oraz klucze i **wygeneruje zabezpieczony plik `.env.local` automatycznie** na Twoim dysku ułatwiając całą pracę.
 
 4. **Wczytaj i zmutuj instalator (Start):**
    ```bash
