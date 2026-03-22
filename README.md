@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ Złoty Boilerplate
 
-## Getting Started
+Potężny i zaawansowany szablon startowy (starter kit) stworzony z myślą o agencjach i freelancerach, którzy chcą dostarczać klientom błyskawiczne, bezpieczne i zoptymalizowane pod kątem SEO strony wizytówkowe oraz aplikacje webowe. Stanowi absolutną przewagę biznesową oraz technologiczną nad konwencjonalnymi, ociężałymi instancjami WordPressa.
 
-First, run the development server:
+## 🚀 Główne założenia i funkcjonalności
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Modułowa budowa niczym klocki LEGO**: Architektura oparta na gotowych sekcjach wizualnych (Hero, FAQ, Cenniki, Zaufanie) ułatwia błyskawiczne budowanie i układanie optymalnych ścieżek konwersji (UX).
+- **Zabezpieczony Headless CMS**: Klienci wprowadzają w panelu wyłącznie ustrukturyzowane wiersze (czysty tekst, Markdown, wgrają pojedyncze zdjęcia). Nie posiadają zabałaganionego kreatora wizualnego, co gwarantuje 100% ochronę oryginalnego designu, spójności marki oraz wydajności!
+- **Wydajność Core Web Vitals na poziomie 99-100/100**: Zautomatyzowana kompresja i optymalizacja obrazów (konwersja do WebP/AVIF o 90-95% mniejszej wadze) bezpośrednio we wbudowanych mechanizmach rzutowania obrazków.
+- **Zautomatyzowane Techniczne SEO**: Dynamicznie generowane meta tytuły, opisy, karty Open Graph oraz wbudowane generatory danych strukturalnych (Schema.org / JSON-LD) - skalujące widoczność lokalnych firm.
+
+## 🛠️ Stos Technologiczny (Tech Stack)
+
+* **Framework:** Next.js 15 (App Router, React Server Components)
+* **Styling:** Tailwind CSS v4 (semantyczne zmienne globalne wpięte w `globals.css`)
+* **UI Components:** shadcn/ui (Radix UI, idealna budowa dostępności - a11y)
+* **Baza Danych & Auth:** Supabase (szybki PostgreSQL po API, wbudowany autoryzator sesyjny, włączone Row Level Security)
+* **Walidacja i Formularze:** Zod + React Hook Form
+* **Infrastruktura Wdrożenia:** Architektura przygotowana pod konteneryzację (Docker) i bezpośredni deployment na instancje VPS (Hetzner) zarządzane przez np. Coolify.
+
+## 📂 Architektura Projektu
+
+Projekt dzieli się na wyraźne strefy izolując autorski panel administracyjny od publicznego frontendu oraz oddzielając głupie/"ślepe" komponenty UI od złożonych klocków biznesowych.
+
+```text
+src/
+├── app/
+│   ├── (public)/         # Frontend oglądany przez klienta (indeksowane przez Google)
+│   ├── (admin)/          # Chroniony panel autorskiego systemu zarządzania CMS
+│   ├── api/              # Route Handlers. API i webhooks (np. triggerowane z bazy)
+│   └── globals.css       # Kontekstowa konfiguracja Tailwind v4 i motyw dark/light
+├── components/
+│   ├── blocks/           # Złożone, reużywalne sekcje z logiką (Hero, Opinie, Cennik)
+│   ├── forms/            # Gotowe systemy formularzy (np. walidowany kontakt)
+│   ├── layout/           # Nawigacja, Desktop Navbar, Mobile Hamburger, Stopki
+│   └── ui/               # Zatomizowane klocki bazowe wygenerowane przed komendy shadcn
+├── lib/
+│   ├── seo/              # Generatory Schema i zautomatyzowane budowanie obiektu Metadata
+│   └── supabase/         # Klienci dostępowi środowiskowo (browser/server components)
+└── types/                # Definicje TypeScript binarne oraz inferowane z Supabase
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏗️ Baza Danych (Supabase)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Wbudowane modele w bazie danych (PostgreSQL) posiadają włączone zabezpieczenia **Row Level Security (RLS)**. Umożliwia to zablokowanie niezalogowanym użytkownikom wprowadzania modyfikacji. Panel admina korzysta z autoryzowanej sesji HTTP, natomiast żądania o treść z publicznego frontendu widzą i renderują na stronie wyłącznie wpisy i tabele posiadające flagę `is_published = true`. 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **`services`** - moduł usług wspierający zaawansowane meta opisy oraz referencje ikon (Lucide).
+* **`blog_posts`** - wpisy blogowe podstron służące pozycjonowaniu "Long-tail SEO".
+* **`faq`** - usystematyzowane wiersze służące dla generatora Schema FAQPage.
+* **`testimonials`** - łatwy system ocen i opinii klientów budujących Social Proof blisko ścieżek konwersyjnych.
 
-## Learn More
+*Szablony zapytań SQL do wygenerowania tabel znajdziesz w pliku `supabasetodo/sqleditor.md`.*
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💻 Środowisko Lokalne
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Sklonuj repo i przejdź do folderu aplikacji:
+   ```bash
+   git clone [TWOJ_ADRES_REPO] zloty-boilerplate
+   cd zloty-boilerplate
+   ```
+2. Zainstaluj biblioteki node'owe ze świetną polityką zależności w package:
+   ```bash
+   npm install
+   ```
+3. Skonfiguruj klucze do Supabase - zmień nazwę `.env.example` (bądź stwórz plik) na `.env.local` i wklej swoje klucze wyciągnięte z zakładki Project Settings z Supabase:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL="https://TWOJAKONCOWKA.supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbG..."
+   ```
+4. Odpal środowisko developerskie Next.js:
+   ```bash
+   npm run dev
+   ```
+5. Rozpocznij pisanie fenomenalnego kodu! Zmiany naniesione w folderze będą odświeżane na żywo za sprawą `Hot Module Replacement (HMR)`. 
