@@ -11,7 +11,7 @@ Potężny i zaawansowany szablon startowy (starter kit) stworzony z myślą o ag
 
 ## 🛠️ Stos Technologiczny (Tech Stack)
 
-* **Framework:** Next.js 15 (App Router, React Server Components)
+* **Framework:** Next.js 16 (App Router, React Server Components)
 * **Styling:** Tailwind CSS v4 (semantyczne zmienne globalne wpięte w `globals.css`)
 * **UI Components:** shadcn/ui (Radix UI, idealna budowa dostępności - a11y)
 * **Baza Danych & Auth:** Supabase (szybki PostgreSQL po API, wbudowany autoryzator sesyjny, włączone Row Level Security)
@@ -23,21 +23,12 @@ Potężny i zaawansowany szablon startowy (starter kit) stworzony z myślą o ag
 Projekt dzieli się na wyraźne strefy izolując autorski panel administracyjny od publicznego frontendu oraz oddzielając głupie/"ślepe" komponenty UI od złożonych klocków biznesowych.
 
 ```text
-src/
-├── app/
-│   ├── (public)/         # Frontend oglądany przez klienta (indeksowane przez Google)
-│   ├── (admin)/          # Chroniony panel autorskiego systemu zarządzania CMS
-│   ├── api/              # Route Handlers. API i webhooks (np. triggerowane z bazy)
-│   └── globals.css       # Kontekstowa konfiguracja Tailwind v4 i motyw dark/light
-├── components/
-│   ├── blocks/           # Złożone, reużywalne sekcje z logiką (Hero, Opinie, Cennik)
-│   ├── forms/            # Gotowe systemy formularzy (np. walidowany kontakt)
-│   ├── layout/           # Nawigacja, Desktop Navbar, Mobile Hamburger, Stopki
-│   └── ui/               # Zatomizowane klocki bazowe wygenerowane przed komendy shadcn
-├── lib/
-│   ├── seo/              # Generatory Schema i zautomatyzowane budowanie obiektu Metadata
-│   └── supabase/         # Klienci dostępowi środowiskowo (browser/server components)
-└── types/                # Definicje TypeScript binarne oraz inferowane z Supabase
+zloty-boilerplate/
+├── src/                  # Kod źródłowy (omówiony wyżej)
+├── .env.example          # Wzór bezpiecznych zmiennych środowiskowych Supabase
+├── .prettierrc.json      # Rygorystyczne normy formatowania i zautomatyzowane CSS klas Tailwind
+├── Dockerfile            # Plik konfiguracyjny do utworzenia lekkiego, ostatecznego obrazu (Standalone)
+└── docker-compose.yml    # Zestaw usług wdrożeniowych optymalnego środowiska
 ```
 
 ## 🏗️ Baza Danych (Supabase)
