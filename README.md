@@ -24,7 +24,10 @@ Projekt dzieli się na wyraźne strefy izolując autorski panel administracyjny 
 
 ```text
 zloty-boilerplate/
-├── src/                  # Kod źródłowy (omówiony wyżej)
+├── app/                  # Frontend klientów i panel zarządzania CMS
+├── components/           # Klocki UI (shadcn) i gotowe sekcje biznesowe (blocks)
+├── lib/                  # Warstwy dostępowe (Supabase client/server) u utility
+├── types/                # Pobrane po API typy TypeScript naszej bazy danych
 ├── .env.example          # Wzór bezpiecznych zmiennych środowiskowych Supabase
 ├── .prettierrc.json      # Rygorystyczne normy formatowania i zautomatyzowane CSS klas Tailwind
 ├── Dockerfile            # Plik konfiguracyjny do utworzenia lekkiego, ostatecznego obrazu (Standalone)
