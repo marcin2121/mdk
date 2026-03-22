@@ -1,70 +1,94 @@
-# ⚡ Złoty Boilerplate
+# ⚡ MDK (Molenda Development Kit)
 
-Potężny i zaawansowany szablon startowy (starter kit) stworzony z myślą o agencjach i freelancerach, którzy chcą dostarczać klientom błyskawiczne, bezpieczne i zoptymalizowane pod kątem SEO strony wizytówkowe oraz aplikacje webowe. Stanowi absolutną przewagę biznesową oraz technologiczną nad konwencjonalnymi, ociężałymi instancjami WordPressa.
+Ewolucja standardowych boilerplate'ów na rynkach zachodnich. **MDK** (Molenda Development Kit) to udostępniony jako open-source, wysoce wyspecjalizowany zestaw deweloperski z wbudowaną architekturą "Self-Configuring Repository". Zamiast zmuszać programistę do układania dziesiątek plików w strukturze manualnie, MDK posiada wbudowany autorski instalator graficzny działający całkowicie w oparciu o środowisko Node.js.
 
-## 🚀 Główne założenia i funkcjonalności
-
-- **Modułowa budowa niczym klocki LEGO**: Architektura oparta na gotowych sekcjach wizualnych (Hero, FAQ, Cenniki, Zaufanie) ułatwia błyskawiczne budowanie i układanie optymalnych ścieżek konwersji (UX).
-- **Zabezpieczony Headless CMS**: Klienci wprowadzają w panelu wyłącznie ustrukturyzowane wiersze (czysty tekst, Markdown, wgrają pojedyncze zdjęcia). Nie posiadają zabałaganionego kreatora wizualnego, co gwarantuje 100% ochronę oryginalnego designu, spójności marki oraz wydajności!
-- **Wydajność Core Web Vitals na poziomie 99-100/100**: Zautomatyzowana kompresja i optymalizacja obrazów (konwersja do WebP/AVIF o 90-95% mniejszej wadze) bezpośrednio we wbudowanych mechanizmach rzutowania obrazków.
-- **Zautomatyzowane Techniczne SEO**: Dynamicznie generowane meta tytuły, opisy, karty Open Graph oraz wbudowane generatory danych strukturalnych (Schema.org / JSON-LD) - skalujące widoczność lokalnych firm.
-
-## 🛠️ Stos Technologiczny (Tech Stack)
-
-* **Framework:** Next.js 16 (App Router, React Server Components)
-* **Styling:** Tailwind CSS v4 (semantyczne zmienne globalne wpięte w `globals.css`)
-* **UI Components:** shadcn/ui (Radix UI, idealna budowa dostępności - a11y)
-* **Baza Danych & Auth:** Supabase (szybki PostgreSQL po API, wbudowany autoryzator sesyjny, włączone Row Level Security)
-* **Walidacja i Formularze:** Zod + React Hook Form
-* **Infrastruktura Wdrożenia:** Architektura przygotowana pod konteneryzację (Docker) i bezpośredni deployment na instancje VPS (Hetzner) zarządzane przez np. Coolify.
-
-## 📂 Architektura Projektu
-
-Projekt dzieli się na wyraźne strefy izolując autorski panel administracyjny od publicznego frontendu oraz oddzielając głupie/"ślepe" komponenty UI od złożonych klocków biznesowych.
-
-```text
-zloty-boilerplate/
-├── app/                  # Frontend klientów i panel zarządzania CMS
-├── components/           # Klocki UI (shadcn) i gotowe sekcje biznesowe (blocks)
-├── lib/                  # Warstwy dostępowe (Supabase client/server) u utility
-├── types/                # Pobrane po API typy TypeScript naszej bazy danych
-├── .env.example          # Wzór bezpiecznych zmiennych środowiskowych Supabase
-├── .prettierrc.json      # Rygorystyczne normy formatowania i zautomatyzowane CSS klas Tailwind
-├── Dockerfile            # Plik konfiguracyjny do utworzenia lekkiego, ostatecznego obrazu (Standalone)
-└── docker-compose.yml    # Zestaw usług wdrożeniowych optymalnego środowiska
-```
-
-## 🏗️ Baza Danych (Supabase)
-
-Wbudowane modele w bazie danych (PostgreSQL) posiadają włączone zabezpieczenia **Row Level Security (RLS)**. Umożliwia to zablokowanie niezalogowanym użytkownikom wprowadzania modyfikacji. Panel admina korzysta z autoryzowanej sesji HTTP, natomiast żądania o treść z publicznego frontendu widzą i renderują na stronie wyłącznie wpisy i tabele posiadające flagę `is_published = true`. 
-
-* **`services`** - moduł usług wspierający zaawansowane meta opisy oraz referencje ikon (Lucide).
-* **`blog_posts`** - wpisy blogowe podstron służące pozycjonowaniu "Long-tail SEO".
-* **`faq`** - usystematyzowane wiersze służące dla generatora Schema FAQPage.
-* **`testimonials`** - łatwy system ocen i opinii klientów budujących Social Proof blisko ścieżek konwersyjnych.
-
-*Szablony zapytań SQL do wygenerowania tabel znajdziesz w pliku `supabasetodo/sqleditor.md`.*
+Projekt stworzony z myślą o natychmiastowym budowaniu bezpiecznego, w pełni opartego o **Supabase SSR** kodu równego poziomem dojrzałym środowiskom inżynierskim.
 
 ---
 
-## 💻 Środowisko Lokalne
+## 🚀 Koronna Funkcja: The Setup Interceptor (GUI CLI)
 
-1. Sklonuj repo i przejdź do folderu aplikacji:
+Zanurzyliśmy proces budowania aplikacji webowych (SaaS, E-commerce, Wizytówki) w nowej, nieodwracalnej pętli instalacyjnej. Gdy uruchomisz projekt po raz pierwszy, **Edge Middleware / Layout zablokuje wejście** i uruchomi dla Ciebie graficzny *"Setup Wizard"*.
+
+Możliwości Instalatora Graficznego w przeglądarce:
+- **Zero-Config Template Generator**: Za pomocą interfejsu określasz dominujący pion biznesowy projektu (np. B2B, Portfolio, Lokalny Biznes).
+- **Zmienne Graficzne (Design Tokens)**: Definiujesz w locie z palety barw kolor podstawowy i wpisujesz nazwę aplikacji. Informacja zapisywana jest do ukrytego pliku konfiguracyjnego środowiska (`.molenda-setup`).
+- **Dynamic NPM Injection**: Server Action na dnie instalatora (oparta na `child_process.execAsync`) pobiera zdefiniowane dla szablonu pakiety niezbędne do jego działania ze środowiska NPM.
+- **FS Code Injection (Iniekcja Kodu Zewnętrznego)**: Używając Node.js `fs.writeFileSync(...)`, aplikacja dosłownie modyfikuje swój własny skompilowany plik `app/(public)/page.tsx` wklejając tam precyzyjnie oszlifowany kod uformowany we wskazanym Kolorze Twojego projektu!
+
+## ⚙️ Wymagania Architektoniczne w Rdzeniu
+
+*   **React 19 Server Actions & useActionState**: Kod przestał sprawnie opierać się na `useState` i `useEffect`. Bezpośrednio wbudowaliśmy akcje serwerowe (`use server`) podłączone pod formularze za pomocą hooków kontrolujących ładowania bez jednego grama nadmiarowego JS u klienta.
+*   **Edge-Security (Supabase SSR Auth)**: Absolutnie koszerna logika uwierzytelniania w Next.js. `createClient` osadzony po stronie API weryfikuje Cookies z uprawnieniami RLS w sercu układu. Middleware przechwytuje wejścia uciążliwych gości rzucając przekierowanie `301`, chroniąc komponenty.
+*   **Baza Danych w pełni oparta na RLS (Row Level Security)**: Żadne bezmyślne zapytanie bazodanowe po stronie klienta nie ma prawa zadziałać. Operacje CRUD dołączone dla panelu CMS przechodzą walidację Zod Schema w zamkniętych węzłach backendu.
+*   **Strict Type-Safety**: 100% obłożenia TypeScriptem od pierwszej akcji serwerowej, aż w głąb żądania interfejsowego przy API Supabase.
+
+---
+
+## 🛠️ Stos Technologiczny
+
+*   **Silnik i Framework:** Next.js 16 (React 19, Server Components)
+*   **Zarządzanie Stanem Bazy Ciasteczkami:** `@supabase/ssr` (Edge Middleware)
+*   **Stylowanie UI / Framework Czasu Mocy:** Tailwind CSS v4
+*   **Wbudowana Baza Komponentów:** Radix UI / shadcn/ui (Accessible Components)
+*   **Wielostanowa Walidacja End-to-End:** Zod (chroniący Server Actions przez błędnymi wstrzyknięciami SQL Injection)
+*   **Architektura Bazy Relacyjnej:** PostgreSQL (zbudowana pod Edge Functions Supabase)
+
+---
+
+## 📂 Architektura Projektu
+
+Projekt dzieli się na silnie stypizowane, odporne na potężne wektory awarii bloki infrastrukturalne.
+
+```text
+mdk/
+├── app/                        # Główne wejścia routing'owe Next.js App Router
+│   ├── (admin)/dashboard/      # Wektor zastrzeżony. Zabezpieczony weryfikacją Middleware. Pulpit CMS.
+│   └── (public)/page.tsx       # Plik polimofriczny. Nadpisywany bezpośrednio przez Setup CLI i Node.js!
+├── components/                 
+│   └── wizard/                 # Mroczny Interfejs (Graficzne CLI Setupu), uruchamiany tylko w trybie Nieskonfigurowanym
+├── lib/
+│   ├── actions/                # Czyste Server Actions weryfikujące tożsamość użytkownika CMS
+│   ├── supabase/               # Implementacja wzorca Supabase SSR Server i Middleware
+│   └── templates/index.ts      # Kody źródłowe w obiekcie JSON przeznaczone do wstrzyknięcia do `page.tsx` w Setupie
+├── supabase/migrations/        # Pliki z kodem SQL narzucającym tabele oraz bezpieczeństwo (RLS)
+├── .env.example                # Zbiór wymaganych kluczy URL i JWK (anon_key)
+├── middleware.ts               # Główny zamek odrzucający intruzów z nieaktywnych tras
+└── .molenda-setup              # Osobisty ukryty znacznik stanu Frameworka (pojawia się po instalacji)
+```
+
+---
+
+## 💻 Instrukcja Ogniska Startowego
+
+Wdrożenie projektu opiera się na innowacyjnym doświadczeniu "Z punktu zerowego".
+
+1. **Sklonuj strukturę roboczą i przejdź do folderu:**
    ```bash
-   git clone [TWOJ_ADRES_REPO] zloty-boilerplate
-   cd zloty-boilerplate
+   git clone [TWOJ_ADRES_REPO] mdk
+   cd mdk
    ```
-2. Zainstaluj biblioteki node'owe ze świetną polityką zależności w package:
+
+2. **Zainstaluj rdzenne zależności architektoniczne:**
    ```bash
    npm install
    ```
-3. Skonfiguruj klucze do Supabase - zmień nazwę `.env.example` (bądź stwórz plik) na `.env.local` i wklej swoje klucze wyciągnięte z zakładki Project Settings z Supabase:
+   *(Uwaga: paczki zewnętrzne np. `three.js` czy `Framer Motion` wgrają się automatycznie dopiero poprzez Setup Wizard na podstawie Twojego wyboru!)*
+
+3. **Zbuduj połączenie Supabase:** 
+   Wykonaj kopię `.env.example` zgłaszając ją jako `.env.local` i wklej publiczne klucze uzyskane w API Settings z panelu projektu na Supabase:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL="https://TWOJAKONCOWKA.supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbG..."
+   NEXT_PUBLIC_SUPABASE_URL="https://[ID].supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhb..."
    ```
-4. Odpal środowisko developerskie Next.js:
+
+4. **Wczytaj i zmutuj instalator (Start):**
    ```bash
    npm run dev
    ```
-5. Rozpocznij pisanie fenomenalnego kodu! Zmiany naniesione w folderze będą odświeżane na żywo za sprawą `Hot Module Replacement (HMR)`. 
+   *Wejdź pod adres przeglądarkowy `http://localhost:3000`. Instalator zablokuje stronę i wymusi na Tobie wypełnienie procesu MDK System Initializer. Powodzenia Architekcie.*
+
+### 🔁 Reseting Instalatora (Powrót do MDK Initializera)
+Gdy ukończysz instalator, a MDK wstrzyknie Ci wybrany kod do front-endu generując 70% strony za Ciebie, opcja Setupu znika bezpowrotnie (zamrażana znacznikiem). Jeśli pragniesz zbudować wizualizację od zera i zmienić np. kolory i nazwy brandów wstrzykiwane przez generatory MDK – po prostu usuń ostateczny plik konfiguracyjny (JSON) `.molenda-setup` ukryty w głównym folderze, a następnie wywołaj odświeżenie wejścia na localhost. MDK powróci ze stanu spoczynku.
+
+> Gotowy na bycie zatrudnionym natychmiastowo? Kod obroni zmysł inżynierski za Ciebie.
