@@ -1,0 +1,18 @@
+{
+  "name": "@mdk/builder",
+  "version": "0.1.0",
+  "description": "Visual drag-and-drop workspace module for MDK",
+  "main": "./src/index.ts",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "framer-motion": ">=10.0.0",
+    "lucide-react": ">=0.200.0"
+  },
+  "keywords": [
+    "nextjs",
+    "visual-builder",
+    "builder-workspace"
+  ],
+  "author": "Marcin Molenda",
+  "license": "MIT"
+}

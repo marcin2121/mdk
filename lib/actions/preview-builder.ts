@@ -30,7 +30,12 @@ export async function generateLivePreview(templateId: string, branding: any) {
         }
 
         const brandName = branding.companyName || "MDK STARTUP"
-        const primaryColor = branding.primaryColor || "#EAB308"
+        
+        // Guard against incomplete hex codes (e.g., just '#') while typing
+        const primaryColor = (branding.primaryColor && branding.primaryColor.startsWith('#') && branding.primaryColor.length === 7) 
+            ? branding.primaryColor 
+            : "#f97316"; // global fallback if incomplete
+            
         const heroImage = branding.heroImageUrl || "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070"
         
         const aiHeroTitle = branding.heroTitle || (isEn 

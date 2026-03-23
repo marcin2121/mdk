@@ -115,7 +115,7 @@ export async function parseCodeToNodes(code: string): Promise<{ success: boolean
         plugins: ["jsx"]
      });
 
-     let resultNodes: CanvasNode[] = [];
+     const resultNodes: CanvasNode[] = [];
 
      traverse(ast, {
         JSXElement(path: any) {

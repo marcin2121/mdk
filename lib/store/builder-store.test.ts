@@ -56,14 +56,14 @@ describe('useBuilderStore', () => {
     const newNode = { id: 'node3', type: 'Button' as const, props: { label: "Click" }, children: [] };
     
     addNode(newNode);
-    let { nodes } = useBuilderStore.getState();
+    const { nodes } = useBuilderStore.getState();
     expect(nodes[0].children).toHaveLength(1); // 1 node added
 
     // Undo action
     undo();
     
     // Fetch refreshed memory
-    let { nodes: stateAfterUndo } = useBuilderStore.getState();
+    const { nodes: stateAfterUndo } = useBuilderStore.getState();
     expect(stateAfterUndo[0].children).toHaveLength(0); // should be back to 0 items
   });
 

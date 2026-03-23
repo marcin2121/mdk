@@ -35,8 +35,8 @@ export async function runSetupAction(packages: string[], config: any) {
     if (config.branding?.selectedPackages && config.branding.selectedPackages.length > 0) {
        console.log(`[Molenda CLI] Processing additional packages: ${config.branding.selectedPackages.join(', ')}...`)
        
-       let extraPackages: string[] = []
-       let extraDevPackages: string[] = []
+       const extraPackages: string[] = []
+       const extraDevPackages: string[] = []
        
        config.branding.selectedPackages.forEach((id: string) => {
           if (id === 'prettier') extraDevPackages.push('prettier', 'prettier-plugin-tailwindcss');
@@ -254,7 +254,7 @@ export async function runSetupAction(packages: string[], config: any) {
         try {
             const cssPath = path.join(process.cwd(), 'app', 'globals.css');
             if (fs.existsSync(cssPath)) {
-                let cssText = fs.readFileSync(cssPath, 'utf-8');
+                const cssText = fs.readFileSync(cssPath, 'utf-8');
                 if (!cssText.includes('--mdk-primary')) {
                     fs.appendFileSync(cssPath, `\n\n/* ----- MDK GLOBAL ENGINE INJECTION ----- */\n@layer base {\n  :root {\n    --mdk-primary: ${primaryColor};\n  }\n}\n`);
                     console.log(`[MDK SYSTEM] Wpięto globalnie: --mdk-primary do globals.css z HEX: ${primaryColor}.`);

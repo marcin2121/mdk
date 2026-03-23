@@ -1,6 +1,10 @@
-// Automatycznie wstrzyknięto przez MDK Wizard Remote Registry
+﻿/* MDK-METADATA
+{
+  "dependencies": []
+}
+*/
+// Automatically injected by MDK Wizard Remote Registry
 "use client"
-const isEn = typeof window !== "undefined" && window.location.href.includes("/en");
 import { useState } from 'react';
 
 export default function Chatbot() {
@@ -20,13 +24,13 @@ export default function Chatbot() {
          </div>
          <div className="p-4 h-64 overflow-y-auto bg-black flex flex-col gap-3">
             <div className="bg-zinc-900 text-zinc-300 p-3 rounded-r-xl rounded-bl-xl text-sm w-4/5">
-                {isEn ? "Hello! I am an automatic advisor and quote engineer." : "Witaj! Jestem automatycznym doradcą i inżynierem ofert."} 
-                <span className="hidden">{"{{CHATBOT_CONTEXT}}"}</span>
-                {isEn ? "How can I help you?" : "W czym mogę pomoc?"}
+                Hello! I am an automatic advisor and quote engineer. 
+                <span className="hidden">{{CHATBOT_CONTEXT}}</span>
+                How can I help you?
             </div>
          </div>
          <div className="p-4 border-t border-zinc-800 bg-[#0A0A0A]">
-            <input type="text" placeholder={isEn ? "Type your query..." : "Wpisz zapytanie..."} className="w-full bg-zinc-900 border border-zinc-700 p-3 text-white focus:border-[var(--mdk-primary)] outline-none font-mono text-xs rounded" />
+            <input type="text" placeholder="Type your query..." className="w-full bg-zinc-900 border border-zinc-700 p-3 text-white focus:border-[var(--mdk-primary)] outline-none font-mono text-xs rounded" />
          </div>
       </div>
    )
