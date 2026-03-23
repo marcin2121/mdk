@@ -11,9 +11,10 @@ interface CanvasNodeContainerProps {
   onClick: (e: React.MouseEvent) => void;
   isContainer: boolean;
   depth: number;
+  isStatic?: boolean;
 }
 
-const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer, depth }: CanvasNodeContainerProps) => {
+const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer, depth, isStatic }: CanvasNodeContainerProps) => {
   const { builderMode } = useBuilderStore();
   const { attributes, listeners, setNodeRef: setDragRef, isDragging } = useDraggable({
     id: node.id,
@@ -42,12 +43,12 @@ const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer,
 
   return (
     <div 
-       ref={setNodeRefs}
-       onClick={onClick}
+       ref={isStatic ? undefined : setNodeRefs}
+       onClick={isStatic ? undefined : onClick}
        style={node.props.style}
        className={`${node.props.className || (isContainer ? "p-4 min-h-[50px] border border-dashed border-zinc-700 bg-zinc-900/20" : "p-2")} ${borderClass} ${dropIndicator} ${draggingClass} relative group transition-colors select-none`}
     >
-       {node.type !== "Root" && (
+       {!isStatic && node.type !== "Root" && (
           <div 
             {...listeners} 
             {...attributes}
@@ -71,7 +72,7 @@ const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer,
 export default function BuilderWorkspace() {
   const { nodes, selectedNodeId, selectNode } = useBuilderStore();
 
-  const renderNode = (node: CanvasNode, depth = 0) => {
+  const renderNode = (node: CanvasNode, depth = 0, isStatic = false) => {
     const isSelected = selectedNodeId === node.id;
 
     const handleClick = (e: React.MouseEvent) => {
@@ -89,6 +90,7 @@ export default function BuilderWorkspace() {
          onClick={handleClick} 
          isContainer={isContainer}
          depth={depth}
+         isStatic={isStatic}
        >
           {isContainer ? (
              node.children && node.children.length > 0 ? (

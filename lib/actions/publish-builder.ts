@@ -26,11 +26,12 @@ const renderNodeToJsx = (node: CanvasNode, builderMode: string): string => {
 
    let content = "";
    const getPropOrBind = (key: string, fallback: string) => {
-       if (bindings && bindings[key] && builderMode === "component") {
-          return `{${bindings[key]}}`;
+       if (bindings && bindings[key]) {
+          if (bindings[key].startsWith("item.")) return `{${bindings[key]}}`;
+          if (builderMode === "component") return `{${bindings[key]}}`;
        }
        return props[key] || fallback;
-   };
+    };
 
    if (type === "Heading") content = getPropOrBind("text", "Heading");
    if (type === "Subheading") content = getPropOrBind("text", "Subheading");
@@ -60,6 +61,11 @@ const renderNodeToJsx = (node: CanvasNode, builderMode: string): string => {
          return `<button${classNameAttr}${styleAttr}>${content.startsWith("{") ? content : content}</button>`;
       case "Divider":
          return `<div${classNameAttr}${styleAttr} />`;
+      case "Loop": {
+         const listKey = props.listKey || "items";
+         const listVar = builderMode === "component" ? listKey : `variables?.${listKey}`;
+         return `{variables?.${listKey}?.map((item: any, index: number) => (\n  <div key={index}${classNameAttr}${styleAttr}>\n${childrenJsx}\n  </div>\n))}`;
+      }
       default:
          return `<div${classNameAttr}${styleAttr}>\n${childrenJsx}\n</div>`;
    }

@@ -21,6 +21,23 @@ export default function Inspector() {
      return s.selectedNodeId ? findNode(s.nodes, s.selectedNodeId) : null;
   });
   
+  const isInsideLoop = useBuilderStore((s) => {
+     const checkAncestorLoop = (list: CanvasNode[], id: string): boolean => {
+        const find = (currentList: CanvasNode[], targetId: string, inLoop = false): boolean => {
+             for (const n of currentList) {
+                  if (n.id === targetId) return inLoop;
+                  if (n.children && n.children.length > 0) {
+                      const found = find(n.children, targetId, inLoop || n.type === "Loop");
+                      if (found) return true;
+                  }
+             }
+             return false;
+        };
+        return find(s.nodes, id);
+     };
+     return s.selectedNodeId ? checkAncestorLoop(s.nodes, s.selectedNodeId) : false;
+  });
+
   const STYLE_PRESETS: Record<string, string> = {
     glass: "backdrop-blur-md bg-white/10 border border-white/20 shadow-xl",
     neon: "bg-black border border-[#f97316]/20 shadow-[0_0_20px_rgba(249,115,22,0.2)]",
@@ -264,12 +281,28 @@ export default function Inspector() {
                             <label className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">{key}</label>
                             
                             {/* POWIĄZANIE (BINDING) JEŚLI TRYB KOMPONENTU */}
-                            {builderMode === "component" && key !== "className" && (
-                                <div className="flex items-center gap-1">
-                                    <label className="text-[8px] font-bold text-zinc-600 uppercase">Bind:</label>
-                                    <select 
-                                       value={isBound || ""}
-                                       onChange={(e) => updateNodeBinding(activeNode.id, key, e.target.value === "" ? null : e.target.value)}
+                            {(builderMode === "component" || isInsideLoop) && key !== "className" && (
+                                 <div className="flex items-center gap-1">
+                                     <label className="text-[8px] font-bold text-zinc-600 uppercase">Bind:</label>
+                                     <select 
+                                        value={isBound || ""}
+                                        onChange={(e) => updateNodeBinding(activeNode.id, key, e.target.value === "" ? null : e.target.value)}
+                                        className="bg-black border border-zinc-800 text-[10px] text-[#f97316] h-6 px-1 outline-none rounded-sm"
+                                     >
+                                         <option value="">Static</option>
+                                         {isInsideLoop && (
+                                           <>
+                                             <option value="item.title">item.title</option>
+                                             <option value="item.desc">item.desc</option>
+                                             <option value="item.image">item.image</option>
+                                           </>
+                                         )}
+                                         {Object.keys(variables).map(vName => (
+                                           <option key={vName} value={vName}>{vName}</option>
+                                         ))}
+                                     </select>
+                                 </div>
+                             )}
                                        className="bg-black border border-zinc-800 text-[10px] text-[#f97316] h-6 px-1 outline-none rounded-sm"
                                     >
                                         <option value="">Static</option>

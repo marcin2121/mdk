@@ -14,4 +14,4 @@ export interface CanvasState {
   hoveredNodeId: string | null;
 }
 
-export const CONTAINER_TYPES = ["Section", "Column", "Root", "Grid2", "Grid3", "Card"] as const;
+export const CONTAINER_TYPES = ["Section", "Column", "Root", "Grid2", "Grid3", "Card", "Loop"] as const;

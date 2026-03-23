@@ -90,5 +90,18 @@ export const BUILDER_REGISTRY: Record<string, BlockDefinition> = {
     defaultProps: {
       className: "w-full h-px bg-zinc-800 my-4"
     }
+  },
+  Loop: {
+    type: "Loop",
+    name: "Pętla (Loop)",
+    category: "advanced",
+    defaultProps: {
+      listKey: "items",
+      mockData: JSON.stringify([
+         { title: "Przykładowy Element 1", desc: "Opis elementu 1" },
+         { title: "Przykładowy Element 2", desc: "Opis elementu 2" }
+      ]),
+      className: "flex flex-col gap-4 w-full p-4 border border-dashed border-zinc-700 bg-zinc-900/20 rounded-lg min-h-[100px]"
+    }
   }
 };
