@@ -74,7 +74,7 @@ export default function SetupWizard() {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   
-  // Ewolucja Formularza 70% Gotowości Zlecenia:
+  // Form evolution for wizard execution:
   const [branding, setBranding] = useState({
      companyName: '',
      heroTitle: '',
@@ -139,7 +139,7 @@ export default function SetupWizard() {
          const res = await generateLivePreview(selectedTemplate || 'saas-ai', { ...branding, lang });
          if(res?.timestamp) {
              setLivePreviewTimestamp(Date.now());
-             console.log('[MDK Live Preview] Nowy build hmr zrzucony do /live-preview');
+             console.log('[MDK Live Preview] New HMR build dumped to /live-preview');
          }
      }, 1000);
      return () => clearTimeout(timer);
@@ -153,11 +153,11 @@ export default function SetupWizard() {
          return;
       }
       setIsGeneratingAI(true);
-      setLogs(prev => [...prev, `[MDK AI] Wytwarzanie copywritingu dla podglądu lądowania...`]);
+      setLogs(prev => [...prev, `[MDK AI] Generating copywriting for landing preview...`]);
       const res = await generateCopywriting({ ...branding, lang });
       setIsGeneratingAI(false);
       if(res.error) {
-         setLogs(prev => [...prev, `[MDK AI BŁĄD] ${res.error}`]);
+         setLogs(prev => [...prev, `[MDK AI ERROR] ${res.error}`]);
          // Proceed anyway without strings
          setStep(4);
       } else {
@@ -172,9 +172,9 @@ export default function SetupWizard() {
     
     const templateData = TEMPLATES[selectedType].find(t => t.id === selectedTemplate)
     
-    setLogs(prev => [...prev, `[INIT] Autoryzacja iniekcji kodu docelowego...`])
-    setLogs(prev => [...prev, `[SYSTEM] Generowanie layoutu na bazie 6 zmiennych formularza.`])
-    if (branding.useAI) setLogs(prev => [...prev, `[MDK AI] Wykryto żądanie SEO Copywritingu. Trwa uderzanie do endpointów V1 Google Gemini...`])
+    setLogs(prev => [...prev, `[INIT] Authorizing target code injection...`])
+    setLogs(prev => [...prev, `[SYSTEM] Generating layout based on 6 form variables.`])
+    if (branding.useAI) setLogs(prev => [...prev, `[MDK AI] SEO Copywriting request detected. Hitting V1 Google Gemini endpoints...`])
     
     // Wypchnięcie szerokiej bazy informacyjnej do Node.js -> Server Actions -> fs.writeFileSync()
     const response = await runSetupAction(templateData?.packages || [], {
@@ -188,8 +188,8 @@ export default function SetupWizard() {
        return
     }
 
-    setLogs(prev => [...prev, `[SUCCESS] Plik wejściowy MDK pomyślnie zrzucony do /app/(public)/page.tsx.`])
-    setLogs(prev => [...prev, `[SYSTEM] Zwalnianie blokady Middleware MDK. Trwa reload...`])
+    setLogs(prev => [...prev, `[SUCCESS] MDK entry file successfully dumped to /app/(public)/page.tsx.`])
+    setLogs(prev => [...prev, `[SYSTEM] Releasing MDK Middleware lock. Reloading...`])
     
     setTimeout(() => {
        window.location.reload()
@@ -214,7 +214,7 @@ export default function SetupWizard() {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest border border-zinc-800 bg-[#0A0A0A] py-2 px-4 inline-block">MDK System Initializer</p>
                <a href="https://github.com/marcin2121/mdk" target="_blank" rel="noreferrer" className="flex items-center gap-2 border border-zinc-800 bg-[#0A0A0A] hover:bg-zinc-900 transition-colors py-2 px-4 text-xs font-bold uppercase tracking-widest text-white shadow-[0_0_15px_rgba(234,179,8,0.15)] group">
-                  <Star size={14} className="text-[#EAB308] group-hover:fill-[#EAB308] transition-all" /> {t('star_mdk')}
+                  <Star size={14} className="text-[#f97316] group-hover:fill-[#f97316] transition-all" /> {t('star_mdk')}
                   {starCount !== null && (
                      <span className="ml-1 px-1.5 py-0.5 bg-zinc-800 text-[10px] text-zinc-400 font-mono">
                         {starCount}
@@ -228,7 +228,7 @@ export default function SetupWizard() {
             </div>
          </div>
 
-         {/* -------------------- STEPS 1 & 2 (Uproszczone by utrzymać flow dla usera) -------------------- */}
+         {/* -------------------- STEPS 1 & 2 (Simplified to maintain user flow) -------------------- */}
          {step === 1 && (
             <div className="bg-[#0A0A0A] border-2 border-zinc-800 p-8 sm:p-10 max-w-4xl w-full shadow-2xl relative animate-in fade-in slide-in-from-bottom-8">
                <div className="mb-8 border-b border-zinc-900 pb-6"><h2 className="text-3xl font-black uppercase tracking-tight">{t('step1_title')}</h2></div>
@@ -261,7 +261,7 @@ export default function SetupWizard() {
             </div>
          )}
          
-         {/* -------------------- Krok 3: SYSTEMY I ARCHITEKTURA -------------------- */}
+         {/* -------------------- Step 3: Architecture & AI -------------------- */}
          {step === 3 && (
             <div className="bg-[#0A0A0A] border-2 border-[#f97316] p-8 sm:p-10 max-w-5xl w-full shadow-2xl animate-in fade-in slide-in-from-right-8 duration-500 relative z-10">
                <div className="flex items-center gap-4 mb-10 border-b border-zinc-900 pb-6">
@@ -386,14 +386,14 @@ export default function SetupWizard() {
 
          
 
-{/* -------------------- Krok 4: WIZUALNY KREATOR (FULLSCREEN) -------------------- */}
+{/* -------------------- Step 4: Visual Builder (Fullscreen) -------------------- */}
          {step === 4 && (
             <div className="fixed inset-0 z-50 bg-[#050505] flex flex-col md:flex-row overflow-hidden animate-in fade-in zoom-in-95">
-               {/* SIDEBAR: WIZUALNA PERSONALIZACJA */}
+               {/* SIDEBAR: VISUAL CUSTOMIZATION */}
                <div className="w-full md:w-[450px] h-full bg-[#0A0A0A] border-r border-[#f97316]/50 flex flex-col z-20 shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
                    <div className="p-6 border-b border-zinc-900 shrink-0">
                       <button onClick={() => setStep(3)} className="flex items-center gap-2 text-zinc-500 hover:text-white uppercase tracking-widest text-xs font-bold mb-4">
-                         <ArrowLeft size={14}/> Wróć
+                         <ArrowLeft size={14}/> {t('back')}
                       </button>
                       <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316] leading-none mb-2">{t('visual_builder')}</h2>
                       <p className="text-zinc-400 text-xs">{t('visual_builder_desc')}</p>
@@ -427,7 +427,7 @@ export default function SetupWizard() {
                             <div className="space-y-3">
                                <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_title_editor')}</label>
                                <textarea rows={2} value={branding.heroTitle || ''} onChange={(e) => setBranding({...branding, heroTitle: e.target.value})} placeholder={t('hero_title_placeholder')} className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
-                               <p className="text-[9px] text-zinc-600">Tip: Użyj &lt;br/&gt; i &lt;span style=...&gt;</p>
+                               <p className="text-[9px] text-zinc-600">Tip: Use &lt;br/&gt; and &lt;span style=...&gt;</p>
                             </div>
                             <div className="space-y-3">
                                <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_desc_editor')}</label>
@@ -469,10 +469,10 @@ export default function SetupWizard() {
                                  <div className="space-y-2">
                                  {[
                                      { id: 'chatbot', name_key: 'chatbot_name', name_fallback: 'Chatbot AI B2B' },
-                                     { id: 'calculator', name_key: 'calculator_name', name_fallback: 'Kalkulator B2B' },
-                                     { id: 'testimonials', name_key: 'testimonials_name', name_fallback: 'Karuzela Opinii' },
-                                     { id: 'pricing', name_key: 'pricing_name', name_fallback: 'Plany Abonamentowe' },
-                                     { id: 'faq', name_key: 'faq_name', name_fallback: 'Zwijane Sekcje (FAQ)' }
+                                     { id: 'calculator', name_key: 'calculator_name', name_fallback: 'B2B Calculator' },
+                                     { id: 'testimonials', name_key: 'testimonials_name', name_fallback: 'Testimonials Slider' },
+                                     { id: 'pricing', name_key: 'pricing_name', name_fallback: 'Subscription Plans' },
+                                     { id: 'faq', name_key: 'faq_name', name_fallback: 'Accordion (FAQ)' }
                                  ].map((m) => {
                                       const isChecked = branding.modules[m.id as keyof typeof branding.modules];
                                       return (
@@ -535,7 +535,7 @@ export default function SetupWizard() {
          )}
 
 
-         {/* -------------------- Krok 5: Narzędzia Deweloperskie (Showcase) -------------------- */}
+         {/* -------------------- Step 5: Developer Tools (Showcase) -------------------- */}
          {step === 5 && (
             <div className="bg-[#0A0A0A] border-2 border-[#f97316] p-8 sm:p-10 max-w-4xl w-full shadow-2xl animate-in fade-in slide-in-from-right-8 duration-500">
                <div className="flex items-center gap-4 mb-8 border-b border-zinc-900 pb-6">
@@ -599,7 +599,7 @@ export default function SetupWizard() {
             </div>
          )}
 
-         {/* -------------------- Krok 6: Tworzenie .env.local -------------------- */}
+         {/* -------------------- Step 6: Create .env.local -------------------- */}
          {step === 6 && (
             <div className="bg-[#0A0A0A] border-2 border-[#f97316] p-8 sm:p-10 max-w-4xl w-full shadow-2xl animate-in fade-in slide-in-from-right-8 duration-500">
                <div className="flex items-center gap-4 mb-10 border-b border-zinc-900 pb-6">
@@ -607,7 +607,7 @@ export default function SetupWizard() {
                      <ArrowLeft size={20} />
                   </button>
                   <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#EAB308]">{t('step6_title')}</h2>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316]">{t('step6_title')}</h2>
                     <p className="text-zinc-400 mt-1">{t('step6_desc')}</p>
                   </div>
                </div>
@@ -615,20 +615,20 @@ export default function SetupWizard() {
                <div className="space-y-6">
                   <div className="space-y-3">
                      <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_url_label')}</label>
-                     <input type="text" value={branding.supabaseUrl} onChange={(e) => setBranding({...branding, supabaseUrl: e.target.value})} placeholder={t('supabase_url_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
+                     <input type="text" value={branding.supabaseUrl} onChange={(e) => setBranding({...branding, supabaseUrl: e.target.value})} placeholder={t('supabase_url_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                   </div>
                   <div className="space-y-3">
                      <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_anon_label')}</label>
-                     <input type="password" value={branding.supabaseAnonKey} onChange={(e) => setBranding({...branding, supabaseAnonKey: e.target.value})} placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
+                     <input type="password" value={branding.supabaseAnonKey} onChange={(e) => setBranding({...branding, supabaseAnonKey: e.target.value})} placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                   </div>
                   <div className="space-y-3">
                      <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_role_label')}</label>
-                     <input type="password" value={branding.supabaseServiceRole} onChange={(e) => setBranding({...branding, supabaseServiceRole: e.target.value})} placeholder={t('supabase_role_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
+                     <input type="password" value={branding.supabaseServiceRole} onChange={(e) => setBranding({...branding, supabaseServiceRole: e.target.value})} placeholder={t('supabase_role_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                   </div>
                </div>
 
                <div className="flex justify-end pt-8 mt-8 border-t border-zinc-900">
-                  <button onClick={() => setStep(7)} className="bg-[#EAB308] text-black font-black uppercase tracking-widest px-10 py-5 hover:bg-white transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)]">
+                  <button onClick={() => setStep(7)} className="bg-[#f97316] text-black font-black uppercase tracking-widest px-10 py-5 hover:bg-white transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)]">
                      {t('final_submit_btn')}
                   </button>
                </div>
@@ -636,7 +636,7 @@ export default function SetupWizard() {
          )}
 
 
-         {/* -------------------- Krok 7: Egzekucja Terminalowa -------------------- */}
+         {/* -------------------- Step 7: Terminal Execution -------------------- */}
          {step === 7 && (
             <div className="bg-[#0A0A0A] border-2 border-white p-8 sm:p-12 max-w-4xl w-full flex flex-col animate-in fade-in zoom-in duration-500">
                <h2 className="text-4xl font-black uppercase tracking-tight mb-8 text-center">{t('final_build')}</h2>
@@ -646,7 +646,7 @@ export default function SetupWizard() {
                   
                   {logs.map((log, i) => (
                     <div key={i} className="flex gap-4">
-                       <span className={log.includes('[ERROR]') ? 'text-red-500 font-bold' : log.includes('[SUCCESS]') || log.includes('[SYSTEM]') ? 'text-[#EAB308] font-bold' : 'text-zinc-400'}>{log}</span>
+                       <span className={log.includes('[ERROR]') ? 'text-red-500 font-bold' : log.includes('[SUCCESS]') || log.includes('[SYSTEM]') ? 'text-[#f97316] font-bold' : 'text-zinc-400'}>{log}</span>
                     </div>
                   ))}
                   
@@ -661,7 +661,7 @@ export default function SetupWizard() {
                   <button 
                      onClick={handleStartSetup}
                      disabled={isInstalling || logs.some(l => l.includes('SUCCESS'))}
-                     className="bg-white text-black font-black text-xl uppercase tracking-widest px-8 py-6 hover:bg-[#EAB308] transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                     className="bg-white text-black font-black text-xl uppercase tracking-widest px-8 py-6 hover:bg-[#f97316] transition-colors disabled:opacity-0 disabled:pointer-events-none"
                   >
                      {t('run_generator_btn')}
                   </button>
@@ -682,7 +682,7 @@ export default function SetupWizard() {
             <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
                <div className="bg-[#0A0A0A] border-2 border-[#f97316] w-full max-w-6xl h-[85vh] flex flex-col shadow-[0_0_50px_rgba(234,179,8,0.2)] animate-in zoom-in-95">
                   <div className="flex items-center justify-between p-4 border-b border-zinc-900 bg-zinc-900/50">
-                     <h3 className="font-bold uppercase tracking-wider text-sm text-[#f97316]">Przegląd Live Componentu</h3>
+                     <h3 className="font-bold uppercase tracking-wider text-sm text-[#f97316]">Live Component Preview</h3>
                      <button onClick={() => setPreviewUrl(null)} className="text-zinc-400 hover:text-white font-black text-xl px-3">&times;</button>
                   </div>
                   <div className="flex-1 w-full bg-white relative">

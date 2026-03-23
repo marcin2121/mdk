@@ -2,8 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 /**
- * Kluczowa logika obsługująca cykl życia ciasteczek i odświeżania tokenów.
- * Wrzucane jako główny Middleware Next.js by chronić trasy na najniższym poziomie Edge.
+ * Key logic handling cookie lifecycle and token refresh.
+ * Injected as the main Next.js Middleware to protect routes at the Edge level.
  */
 export async function updateSession(request: NextRequest) {
   // Przejmujemy natywne Next.js requests
@@ -32,13 +32,13 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Autoryzacja i wyciąganie identyfikatora sesji. 
-  // Bez tego `await`, token by wygasł a Server Components zrzuciły się w Error.
+  // Authorization and extracting session ID. 
+  // Without this `await`, the token might expire and Server Components will crash with an Error.
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Zaawansowane blokowanie tras bez API handlersów (Edge zabezpieczenia)
+  // Advanced route blocking without API handlers (Edge security)
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
   const isAdminRoute = request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/admin')
 
@@ -49,7 +49,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Wyrzucenie zalogowanego usera spowrotem do panelu (brak wejścia drugi raz na login page)
+  // Redirect logged-in user back to the dashboard (prevent entering login page again)
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'

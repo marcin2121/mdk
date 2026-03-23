@@ -1,8 +1,9 @@
 "use client";
 
 import { useBuilderStore } from "@/lib/store/builder-store";
-import { CanvasNode } from "@/lib/types/builder";
+import { CanvasNode, CONTAINER_TYPES } from "@/lib/types/builder";
 import { Trash2, Palette, Type } from "lucide-react";
+import { ICON_MAP } from "./Workspace";
 
 export default function Inspector() {
   const { nodes, selectedNodeId, updateNodeProps, removeNode, builderMode, variables, updateNodeBinding } = useBuilderStore();
@@ -60,14 +61,14 @@ export default function Inspector() {
   if (!selectedNodeId) {
      return (
         <div className="flex flex-col items-center justify-center p-10 text-center text-zinc-600 h-full font-mono text-xs leading-relaxed select-none">
-           Zaznacz węzeł na<br/>głównej makiecie Canvas,<br/>aby dostroić jego parametry.
+           Select a node on the<br/>main Canvas,<br/>to tune its parameters.
         </div>
      );
   }
 
   if (!activeNode) return null;
 
-    const propKeys = Object.keys(activeNode.props).filter(k => k !== 'style'); // Odfiltruj obiekt style z ogólnej pętli
+    const propKeys = Object.keys(activeNode.props).filter(k => k !== 'style'); // Filter out style object from the general loop
   const currentStyle = activeNode.props.style || {};
 
   const handleStyleChange = (key: string, value: string) => {
@@ -80,7 +81,7 @@ export default function Inspector() {
        const className = activeNode.props.className ?? "";
        let classes = className.split(" ").filter(Boolean);
 
-      // Usunięcie kolidujących klas na bazie prefiksów
+      // Remove colliding classes based on prefixes
       classes = classes.filter((c: string) => {
          return !removePrefixes.some(prefix => c === prefix || c.startsWith(prefix + "-") || c.startsWith(prefix));
       });
@@ -95,7 +96,7 @@ export default function Inspector() {
   return (
     <div className="flex-1 p-6 relative flex flex-col h-full bg-[#050505]">
        
-       {/* Panel Nagłówkowy Inspektoratu */}
+       {/* Inspector Header Panel */}
        <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-900">
            <div>
               <p className="text-[10px] uppercase font-mono tracking-widest text-[#f97316]">Active Node</p>
@@ -114,12 +115,12 @@ export default function Inspector() {
            {/* --- SEKCJA 1: QUICK DESIGN (KOLORY) --- */}
            <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-4 flex items-center gap-2">
-                 <Palette size={14} className="text-[#f97316]"/> Szybki Design
+                 <Palette size={14} className="text-[#f97316]"/> Quick Design
                </h3>
                
                <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase flex items-center gap-1"><Palette size={10}/> Tło (Background)</label>
+                      <label className="text-[9px] font-bold text-zinc-500 uppercase flex items-center gap-1"><Palette size={10}/> Background</label>
                       <div className="flex items-center gap-2 border border-zinc-800 bg-black p-1 rounded-md focus-within:border-[#f97316] transition-colors">
                           <input 
                              type="color" 
@@ -140,7 +141,7 @@ export default function Inspector() {
 
                <div className="flex items-center justify-between gap-4 mt-2">
                   <div className="flex-1 space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase flex items-center gap-1"><Type size={10}/> Tekst (Font Color)</label>
+                      <label className="text-[9px] font-bold text-zinc-500 uppercase flex items-center gap-1"><Type size={10}/> Text Color</label>
                       <div className="flex items-center gap-2 border border-zinc-800 bg-black p-1 rounded-md focus-within:border-[#f97316] transition-colors">
                           <input 
                              type="color" 
@@ -163,7 +164,7 @@ export default function Inspector() {
             {/* --- SEKCJA 1C: NOWOCZESNE PRESETY STYLÓW --- */}
            <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-2">
-                 <div className="w-2.5 h-2.5 bg-gradient-to-tr from-[#f97316] to-pink-500 rounded-full"></div> Efekty i Style (Presets)
+                 <div className="w-2.5 h-2.5 bg-gradient-to-tr from-[#f97316] to-pink-500 rounded-full"></div> Effects & Styles (Presets)
                </h3>
                <div className="grid grid-cols-2 gap-2">
                    <button 
@@ -171,48 +172,48 @@ export default function Inspector() {
                       className="p-3 bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/40 text-left rounded-md transition-all group"
                    >
                       <span className="text-[11px] font-bold text-white group-hover:text-[#f97316]">Glassmorphism</span>
-                      <p className="text-[8px] text-zinc-500 mt-1">Szkliste tło & blur</p>
+                      <p className="text-[8px] text-zinc-500 mt-1">Glassy background & blur</p>
                    </button>
                    <button 
                       onClick={() => applyStylePreset(activeNode, "neon")}
                       className="p-3 bg-black border border-zinc-900 hover:border-[#f97316] text-left rounded-md transition-all group"
                    >
                       <span className="text-[11px] font-bold text-zinc-400 group-hover:text-white">Neon Glow</span>
-                      <p className="text-[8px] text-zinc-600 mt-1">Poświaty i cienie</p>
+                      <p className="text-[8px] text-zinc-600 mt-1">Glow & shadows</p>
                    </button>
                    <button 
                       onClick={() => applyStylePreset(activeNode, "clay")}
                       className="p-3 bg-zinc-900 border border-zinc-800 hover:border-zinc-500 text-left rounded-md transition-all group"
                    >
                       <span className="text-[11px] font-bold text-zinc-300 group-hover:text-white">Soft Clay</span>
-                      <p className="text-[8px] text-zinc-600 mt-1">Wypukłe cienie</p>
+                      <p className="text-[8px] text-zinc-600 mt-1">Raised shadows</p>
                    </button>
                    <button 
                       onClick={() => applyStylePreset(activeNode, "neoPop")}
                       className="p-3 bg-yellow-400 border-2 border-black hover:bg-yellow-300 text-left rounded-md transition-all text-black group"
                    >
                       <span className="text-[11px] font-black uppercase">Neopop</span>
-                      <p className="text-[8px] text-zinc-900/60 mt-1">Brutalizm & cienie</p>
+                      <p className="text-[8px] text-zinc-900/60 mt-1">Brutalism & shadows</p>
                    </button>
                </div>
                <button 
                   onClick={() => applyStylePreset(activeNode, "")}
                   className="w-full text-center text-[9px] font-bold text-zinc-500 hover:text-white py-1 transition-colors border border-dashed border-zinc-800/50 rounded-sm mt-1"
                >
-                  Zeruj Preset Stylu
+                  Reset Style Preset
                </button>
            </div>
 
            {/* --- SEKCJA 1B: SMART LAYOUT (TAILWIND TOGGLES) --- */}
-            {["Section", "Column", "Root", "Grid2", "Grid3", "Card"].includes(activeNode.type) && (
+            {(CONTAINER_TYPES as unknown as string[]).includes(activeNode.type) && (
               <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                   <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-2">
-                    <Palette size={14} className="text-blue-500"/> Układ i Odstępy
+                    <Palette size={14} className="text-blue-500"/> Layout & Spacing
                   </h3>
 
                   {/* FLEX / GRID TOGGLE */}
                   <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Układ (Display)</label>
+                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Layout (Display)</label>
                       <div className="grid grid-cols-2 gap-1 bg-black p-1 rounded-md border border-zinc-800">
                           <button 
                              onClick={() => toggleTailwindClass("display", ["flex", "grid", "block"], "flex flex-col")}
@@ -231,7 +232,7 @@ export default function Inspector() {
 
                   {/* PADDING BUTTONS */}
                   <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Padding (Odstępy wewn.)</label>
+                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Padding</label>
                       <div className="grid grid-cols-4 gap-1 bg-black p-1 rounded-md border border-zinc-800">
                           {["p-0", "p-2", "p-4", "p-8"].map(p => (
                             <button 
@@ -247,7 +248,7 @@ export default function Inspector() {
 
                   {/* ALIGNMENT (CENTER ITEM) */}
                   <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Wyrównanie (Align)</label>
+                      <label className="text-[9px] font-bold text-zinc-500 uppercase">Alignment</label>
                       <button 
                           onClick={() => {
                              const hasCenter = activeNode.props.className?.includes("items-center");
@@ -263,7 +264,7 @@ export default function Inspector() {
                                  : "border-zinc-800 text-zinc-500 hover:text-white"
                           }`}
                       >
-                          Środek (Center Items)
+                          Center Items
                       </button>
                   </div>
               </div>
@@ -271,7 +272,7 @@ export default function Inspector() {
 
            {/* --- SEKCJA 2: ZAAWANSOWANE PROPSY (JSON) --- */}
            <div className="space-y-4">
-              <h3 className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase mb-2">Parametry Systemowe (Props)</h3>
+              <h3 className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase mb-2">System Parameters (Props)</h3>
               {propKeys.map(key => {
                   const isBound = activeNode.bindings && activeNode.bindings[key];
                   
@@ -280,32 +281,22 @@ export default function Inspector() {
                         <div className="flex items-center justify-between">
                             <label className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">{key}</label>
                             
-                            {/* POWIĄZANIE (BINDING) JEŚLI TRYB KOMPONENTU */}
                             {(builderMode === "component" || isInsideLoop) && key !== "className" && (
-                                 <div className="flex items-center gap-1">
-                                     <label className="text-[8px] font-bold text-zinc-600 uppercase">Bind:</label>
-                                     <select 
-                                        value={isBound || ""}
-                                        onChange={(e) => updateNodeBinding(activeNode.id, key, e.target.value === "" ? null : e.target.value)}
-                                        className="bg-black border border-zinc-800 text-[10px] text-[#f97316] h-6 px-1 outline-none rounded-sm"
-                                     >
-                                         <option value="">Static</option>
-                                         {isInsideLoop && (
-                                           <>
-                                             <option value="item.title">item.title</option>
-                                             <option value="item.desc">item.desc</option>
-                                             <option value="item.image">item.image</option>
-                                           </>
-                                         )}
-                                         {Object.keys(variables).map(vName => (
-                                           <option key={vName} value={vName}>{vName}</option>
-                                         ))}
-                                     </select>
-                                 </div>
-                             )}
+                                <div className="flex items-center gap-1">
+                                    <label className="text-[8px] font-bold text-zinc-600 uppercase">Bind:</label>
+                                    <select 
+                                       value={isBound || ""}
+                                       onChange={(e) => updateNodeBinding(activeNode.id, key, e.target.value === "" ? null : e.target.value)}
                                        className="bg-black border border-zinc-800 text-[10px] text-[#f97316] h-6 px-1 outline-none rounded-sm"
                                     >
                                         <option value="">Static</option>
+                                        {isInsideLoop && (
+                                          <>
+                                            <option value="item.title">item.title</option>
+                                            <option value="item.desc">item.desc</option>
+                                            <option value="item.image">item.image</option>
+                                          </>
+                                        )}
                                         {Object.keys(variables).map(vName => (
                                           <option key={vName} value={vName}>{vName}</option>
                                         ))}
@@ -325,6 +316,47 @@ export default function Inspector() {
                             <div className="w-full bg-zinc-900 border border-[#f97316]/30 text-[#f97316] font-mono text-xs h-8 flex items-center px-3 rounded-sm">
                                 🔗 Bound to: <span className="font-bold ml-1">{isBound}</span>
                             </div>
+                        ) : key === "src" && activeNode.type === "Image" ? (
+                            <div className="space-y-2">
+                               <input 
+                                  type="text" 
+                                  value={activeNode.props[key]} 
+                                  onChange={(e) => updateNodeProps(activeNode.id, { [key]: e.target.value })}
+                                  className="w-full bg-black border border-zinc-800 text-white font-mono text-xs p-2 outline-none focus:border-[#f97316] rounded-sm"
+                               />
+                               <div className="relative">
+                                   <input 
+                                       type="file" 
+                                       accept="image/*" 
+                                       onChange={(e) => {
+                                           const file = e.target.files?.[0];
+                                           if (file) {
+                                               const reader = new FileReader();
+                                               reader.onloadend = () => {
+                                                   updateNodeProps(activeNode.id, { [key]: reader.result });
+                                               };
+                                               reader.readAsDataURL(file);
+                                           }
+                                       }}
+                                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                   />
+                                   <button className="w-full text-center text-[10px] font-bold bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 py-2 rounded-md transition-colors">
+                                       📁 Upload file (Base64)
+                                   </button>
+                               </div>
+                            </div>
+                        ) : key === "name" && activeNode.type === "Icon" ? (
+                            <div className="grid grid-cols-5 gap-1 bg-black p-1 rounded border border-zinc-800">
+                               {["Heart", "Star", "Check", "ArrowRight", "Smile", "Info", "AlertCircle", "Plus", "Search", "Settings"].map(icon => (
+                                   <button 
+                                       key={icon}
+                                       onClick={() => updateNodeProps(activeNode.id, { [key]: icon })}
+                                       className={`p-2 flex items-center justify-center rounded transition-colors ${activeNode.props[key] === icon ? "bg-[#f97316] text-black" : "text-zinc-500 hover:text-white hover:bg-zinc-900"}`}
+                                   >
+                                       {(() => { const Ic = ICON_MAP[icon as keyof typeof ICON_MAP]; return Ic ? <Ic size={14} /> : null; })()}
+                                   </button>
+                               ))}
+                            </div>
                         ) : (
                             <input 
                                type="text" 
@@ -337,8 +369,7 @@ export default function Inspector() {
                   );
               })}
            </div>
-
-       </div>
-    </div>
-  );
+         </div>
+      </div>
+   );
 }

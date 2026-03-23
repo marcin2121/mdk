@@ -29,7 +29,7 @@ export default function VariablesPanel() {
         {/* FORMULARZ ADD */}
         <form onSubmit={handleAdd} className="p-4 border-b border-zinc-900 bg-zinc-900/10 space-y-3">
              <h4 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-1">
-                 <Plus size={12} className="text-[#f97316]"/> Dodaj Props / Zmienną
+                 <Plus size={12} className="text-[#f97316]"/> Add Prop / Variable
              </h4>
 
              <div className="space-y-1">
@@ -56,7 +56,7 @@ export default function VariablesPanel() {
                      </select>
                  </div>
                  <div className="space-y-1">
-                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Wart. Domyślna</label>
+                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Default Value</label>
                      <input 
                         type="text"
                         value={defaultValue}
@@ -80,7 +80,7 @@ export default function VariablesPanel() {
 
              {Object.keys(variables).length === 0 ? (
                 <div className="text-center text-zinc-600 text-[10px] py-10 font-mono">
-                    Brak zdefiniowanych zmiennych.<br/>Dodaj zmienną u góry.
+                    No variables defined.<br/>Add a variable above.
                 </div>
              ) : (
                 Object.entries(variables).map(([vName, vData]) => (
@@ -89,7 +89,7 @@ export default function VariablesPanel() {
                            <span className="text-xs font-bold text-white font-mono">{vName}</span>
                            <span className="text-[9px] text-zinc-500 ml-2">({vData.type})</span>
                            {vData.default && (
-                             <p className="text-[9px] text-zinc-600 truncate max-w-[140px]">Domyślnie: "{vData.default}"</p>
+                             <p className="text-[9px] text-zinc-600 truncate max-w-[140px]">Default: "{vData.default}"</p>
                            )}
                        </div>
                        <button 

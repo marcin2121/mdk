@@ -65,7 +65,7 @@ export default function BuilderPage() {
 
        const newNode = {
            id: `${type}_${Date.now().toString()}`,
-           type: type,
+           type: type as import('../../lib/types/builder').ComponentType,
            props: { ...blockDef.defaultProps },
            children: []
        };

@@ -13,27 +13,27 @@ function parseMdkMetadata(codeStr: string): { dependencies: string[] } {
         try {
             return JSON.parse(match[1]);
         } catch (e) {
-            console.error("[MDK metadata] Błąd parsowania JSON:", e);
+            console.error("[MDK metadata] JSON Parse Error:", e);
         }
     }
     return { dependencies: [] };
 }
 
-// Powłoka wykonawcza rozszerzona o payload brandingowy (nazwa, obraz, wariant wizualny)
+// Execution wrapper extended with branding payload (name, image, visual variant)
 export async function runSetupAction(packages: string[], config: any) {
   try {
     if (packages.length > 0) {
-      console.log(`[Molenda CLI] Instalowanie zaleznosci: ${packages.join(', ')}...`)
+      console.log(`[Molenda CLI] Installing dependencies: ${packages.join(', ')}...`)
       
       const { stdout, stderr } = await execAsync(`npm install ${packages.join(' ')} --save`)
       
-      console.log(`[Molenda CLI] Pakiety zainstalowane. Wynik:`, stdout)
-      if (stderr) console.error(`[Molenda CLI] Ostrzeżenia NPM:`, stderr)
+      console.log(`[Molenda CLI] Packages installed. Result:`, stdout)
+      if (stderr) console.error(`[Molenda CLI] NPM Warnings:`, stderr)
     }
 
-    // 1.5. OBSŁUGA OPCJONALNYCH PAKIETÓW (Showcase)
+    // 1.5. OPTIONAL PACKAGES HANDLING (Showcase)
     if (config.branding?.selectedPackages && config.branding.selectedPackages.length > 0) {
-       console.log(`[Molenda CLI] Przetwarzanie dodatkowych pakietów: ${config.branding.selectedPackages.join(', ')}...`)
+       console.log(`[Molenda CLI] Processing additional packages: ${config.branding.selectedPackages.join(', ')}...`)
        
        let extraPackages: string[] = []
        let extraDevPackages: string[] = []
@@ -63,17 +63,17 @@ export async function runSetupAction(packages: string[], config: any) {
        })
 
        if (extraPackages.length > 0) {
-          console.log(`[Molenda CLI] Instalowanie dodatkowych bibliotek: ${extraPackages.join(' ')}`)
+          console.log(`[Molenda CLI] Installing additional libraries: ${extraPackages.join(' ')}`)
           await execAsync(`npm install ${extraPackages.join(' ')}`)
        }
 
        if (extraDevPackages.length > 0) {
-          console.log(`[Molenda CLI] Instalowanie dodatkowych DEV bibliotek: ${extraDevPackages.join(' ')}`)
+          console.log(`[Molenda CLI] Installing additional DEV libraries: ${extraDevPackages.join(' ')}`)
           await execAsync(`npm install ${extraDevPackages.join(' ')} -D`)
        }
 
        if (config.branding.selectedPackages.includes('docker')) {
-          console.log(`[Molenda CLI] Generowanie plików Docker (Dockerfile, compose)...`)
+          console.log(`[Molenda CLI] Generating Docker files (Dockerfile, compose)...`)
           const dockerfile = `FROM node:20-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm install\nCOPY .\nRUN npm run build\nEXPOSE 3000\nCMD ["npm", "start"]`
           const dockerCompose = `version: '3.8'\nservices:\n  web:\n    build: .\n    ports:\n      - "3000:3000"\n    env_file:\n      - .env.local`
           
@@ -82,15 +82,15 @@ export async function runSetupAction(packages: string[], config: any) {
        }
     }
 
-    // 2. INIEKCJA ARCHITEKTURY REJESTROWEJ (Registry Pattern)
+    // 2. INJECTION OF REGISTRY ARCHITECTURE (Registry Pattern)
     // Zamiast wstrzykiwać kod z ogromnych brzydkich i ciężkich plików JS do repozytorium, 
     // architekci pobierają szablony jako czysty surowy tekst 
     // albo po URL (.fetch('https...')) albo z wydzielonego pliku lokalnego 'registry/'.
     // W tej implementacji symulujemy fetch czytając przygotowany na zewnątrz czysty TXT.
     
-    // Szukamy pasującego pliku w wydzielonym repozytorium/folderze 'registry/' (Jak w shadcn CLI)
+    // Searching for matching file in separate repository/folder 'registry/' (Like in shadcn CLI)
     const registryFileName = config.templateId + '.txt';
-    // MDK szuka plików z WYDZIELONEGO repozytorium (folder izolowany poza główną bazą projektową)
+    // MDK searches files from ISOLATED repository (folder isolated outside main project base)
     const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', registryFileName);
     
     let rawCodeStr = "";
@@ -106,18 +106,21 @@ export async function runSetupAction(packages: string[], config: any) {
     const primaryColor = config.branding.primaryColor || "#EAB308"
     const heroImage = config.branding.heroImageUrl || ""
     
-    // Dynamicznie przepisz zmienne tekstowe używając Sztucznej Inteligencji przed kompilacją
-    let aiHeroTitle = `Twój Biznes <br/> <span style={{ color: '${primaryColor}' }}>W Nowej Epoce.</span>`
-    let aiHeroDesc  = `Skalowalna architektura i niezwykła szybkość ładowania poprawiająca SEO oraz współczynnik konwersji Twoich klientów.`
+    // Dynamically rewrite text variables using AI before compilation
+    let aiHeroTitle = `Your Business <br/> <span style={{ color: '${primaryColor}' }}>In The New Era.</span>`
+    let aiHeroDesc  = `Scalable architecture and extraordinary load speed improving SEO and conversion rate for your customers.`
 
     if (config.branding.useAI && config.branding.aiKey && config.branding.seoKeywords) {
-        console.log(`[MDK AI] Uderzanie do endpointów ${config.branding.aiProvider.toUpperCase()} w trybie REST API...`)
+        console.log(`[MDK AI] Hitting endpoints ${config.branding.aiProvider.toUpperCase()} in REST API mode...`)
         try {
             const contextAddon = config.branding.aiContext ? `Dodatkowy kontekst od kierownika projektu: ${config.branding.aiContext}` : '';
             const optDb = config.branding.generateDatabase ? `, klucz "sqlSchema" z czystym poprawnym kodem SQL tworzącym 3 pełne tabele do bazy Supabase` : '';
             const optTop = config.branding.generateTopology ? `, oraz klucz "subpages" z tablicą (min. 2 obiekty: "slug" url podstrony bez ukośnika, "title" nagłówek, "content" wyczerpujący kod HTML podstrony)` : '';
             
-            const prompt = `Jesteś światowej klasy ekspertem SEO i Programistą MDK. Nazwa firmy: "${brandName}". Główne słowa kluczowe SEO: "${config.branding.seoKeywords}". ${contextAddon}. Zwróć TYLKO czysty obiekt w poprawnym formacie JSON. Zawartość: "heroTitle" (max 4 słowa, agresywny tytuł B2B), "heroDesc" (Opis na ok. 250 znaków upchnięte bardzo inteligentnie słowa kluczowe)${optDb}${optTop}.`;
+            const isEn = config.lang === 'en';
+            const prompt = isEn 
+              ? `You are a world-class SEO expert and MDK Developer. Company name: "${brandName}". Main SEO keywords: "${config.branding.seoKeywords}". ${contextAddon}. Return ONLY a clean JSON object. Content: "heroTitle" (max 4 words, aggressive B2B title), "heroDesc" (Description around 250 characters with intelligently packed keywords)${optDb}${optTop}.`
+              : `Jesteś światowej klasy ekspertem SEO i Programistą MDK. Nazwa firmy: "${brandName}". Główne słowa kluczowe SEO: "${config.branding.seoKeywords}". ${contextAddon}. Zwróć TYLKO czysty obiekt w poprawnym formacie JSON. Zawartość: "heroTitle" (max 4 słowa, agresywny tytuł B2B), "heroDesc" (Opis na ok. 250 znaków upchnięte bardzo inteligentnie słowa kluczowe)${optDb}${optTop}.`;
             
             let extractedJsonText = "";
 
@@ -243,7 +246,7 @@ export async function runSetupAction(packages: string[], config: any) {
     // 4. KOMPILACJA W LOCIE (Regex Template Engine)
     let compiledCode = rawCodeStr;
 
-    // FEATURE 3: Globalne Wstrzykiwanie Tailwind CSS JIT (Zastępuje sztywne zmienne style="")
+    // FEATURE 3: Global Tailwind CSS JIT Injection (Replaces static style="" variables)
     if (config.branding.injectTailwindVars) {
         compiledCode = compiledCode.replace(/style=\{\{ color: '\{\{PRIMARY_COLOR\}\}' \}\}/g, `className="text-[var(--mdk-primary)] transition-colors"`)
                                    .replace(/style=\{\{ backgroundColor: '\{\{PRIMARY_COLOR\}\}' \}\}/g, `className="bg-[var(--mdk-primary)] transition-colors"`)
@@ -276,8 +279,8 @@ export async function runSetupAction(packages: string[], config: any) {
 
     
 
-    // 4.1 INIEKCJA HEADER / FOOTER W ZALEŻNOŚCI OD WYBRANEGO STYLU 
-    // Zastępuje domyślne tagi <header> i <footer> w pobranym szablonie
+    // 4.1 HEADER / FOOTER INJECTION BASED ON SELECTED STYLE 
+    // Replaces default <header> and <footer> tags in fetched template
     let newHeader = "";
     if (config.branding.navbarStyle === 'glass') {
         newHeader = `
@@ -286,7 +289,7 @@ export async function runSetupAction(packages: string[], config: any) {
             <span className="text-white">{{COMPANY_NAME}}</span>
          </div>
          <nav className="flex items-center gap-6 text-sm font-bold tracking-widest uppercase">
-            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Usługi</span>
+            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Services</span>
             <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Cennik</span>
             <button className="text-black px-6 py-2 rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '{{PRIMARY_COLOR}}' }}>{{CTA_TEXT}}</button>
          </nav>
@@ -336,7 +339,7 @@ export async function runSetupAction(packages: string[], config: any) {
     } else if (config.branding.footerStyle === 'minimal') {
         newFooter = `
       <footer className="border-t border-zinc-900 mt-32 py-8 text-center text-zinc-700 font-mono text-xs uppercase tracking-widest">
-         © 2026 {{COMPANY_NAME}}. Wszelkie prawa zastrzeżone.
+         © 2026 {{COMPANY_NAME}}. All rights reserved.
       </footer>
         `;
     }
@@ -390,7 +393,7 @@ export async function runSetupAction(packages: string[], config: any) {
             }
 
             if (modId === 'chatbot') {
-                code = code.replace(/{{CHATBOT_CONTEXT}}/g, config.branding.modules.chatbotContext || "Pomóż klientowi i odpowiadaj krótko.");
+                code = code.replace(/{{CHATBOT_CONTEXT}}/g, config.branding.modules.chatbotContext || "Help the customer and answer shortly.");
             }
 
             const meta = parseMdkMetadata(code);
@@ -406,7 +409,7 @@ export async function runSetupAction(packages: string[], config: any) {
             if (modId === 'chatbot') {
                 appendedComponents += `<${className} />\n`;
             } else {
-                appendedComponents += `\n            {/* Wstrzykiwany Moduł ${className} */}\n            <${className} />\n`;
+                appendedComponents += `\n            {/* Injected Module ${className} */}\n            <${className} />\n`;
             }
         }
     }
@@ -461,19 +464,19 @@ export async function runSetupAction(packages: string[], config: any) {
     if (appendedComponents) {
        // Podmieniamy nagłówki importów
        compiledCode = appendedImports + compiledCode;
-       // Jeżeli szablon nie ma jawnie określonego <main>, próbujemy wsadzić w najbardziej logczny przedostatni kontener
+       // If template has no explicit <main>, trying to fit into the most logical penultimate container
        compiledCode = compiledCode.replace('</main>', `${appendedComponents}\n        </main>`);
     }
 
-    // Zrujnowanie i zastąpienie starej aplikacji wyrenderowanym wynikiem!
+    // Replacing old application with rendered output!
     const pagePath = path.join(process.cwd(), 'app', '(public)', 'page.tsx')
     fs.writeFileSync(pagePath, compiledCode)
 
-    console.log(`[MDK] Zastąpiono boilerplate. Wstrzyknięto zwalidowany szablon.`)
+    console.log(`[MDK] Boilerplate replaced. Validated template injected.`)
 
-    // 5. Utworzenie .env.local dla Amatorów (Generowanie bezbłędnych kluczy)
+    // 5. Create .env.local for beginners (Flawless keys generation)
     if (config.branding.supabaseUrl || config.branding.supabaseAnonKey) {
-        console.log(`[MDK SYSTEM] Generowanie środowiska .env.local z kluczami API...`)
+        console.log(`[MDK SYSTEM] Generating .env.local environment with API keys...`)
         let envContent = `# Automatycznie wygenerowane przez MDK Setup Wizard\n`
         envContent += `NEXT_PUBLIC_SUPABASE_URL="${config.branding.supabaseUrl || ''}"\n`
         envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY="${config.branding.supabaseAnonKey || ''}"\n`
@@ -489,8 +492,8 @@ export async function runSetupAction(packages: string[], config: any) {
         fs.writeFileSync(path.join(process.cwd(), '.env.local'), envContent)
     }
 
-    // 6. Utworzenie pliku z konfiguracją dla Layoutu: .molenda-setup
-    // Plik informuje komponenty ochronne i CMS, że tryb instalacji GUI się zakończył.
+    // 6. Create configuration file for Layout: .molenda-setup
+    // File notifies security components and CMS that GUI installation mode ended.
     const markerPath = path.join(process.cwd(), '.molenda-setup')
     const payload = {
        installed: true,

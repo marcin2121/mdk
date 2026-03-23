@@ -1,4 +1,4 @@
-export type ComponentType = "Root" | "Section" | "Column" | "Heading" | "Text" | "Button" | "Image" | "Spacer" | "Divider" | string;
+export type ComponentType = "Root" | "Section" | "Column" | "Grid2" | "Grid3" | "Card" | "Heading" | "Subheading" | "Text" | "Button" | "Image" | "Icon" | "Divider" | "Loop";
 
 export interface CanvasNode {
   id: string;

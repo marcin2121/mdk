@@ -6,7 +6,7 @@ import { ChevronRight, ChevronDown, Layers, Box, Type, MousePointer } from "luci
 import { useState } from "react";
 
 /**
- * Zwraca ikonę dopasowaną do typu komponentu
+ * Returns an icon matching the component type
  */
 const getNodeIcon = (type: string) => {
   switch (type) {

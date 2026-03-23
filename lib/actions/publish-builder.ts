@@ -13,7 +13,7 @@ const stringifyStyle = (styleObj: Record<string, any> | undefined) => {
 };
 
 /**
- * Parser węzła rekursywnego - konwertuje format JSON obiektu na ciąg React TSX
+ * Recursive node parser - converts node JSON object to React TSX string
  */
 const renderNodeToJsx = (node: CanvasNode, builderMode: string): string => {
    const { type, props, children, bindings } = node;
@@ -38,8 +38,6 @@ const renderNodeToJsx = (node: CanvasNode, builderMode: string): string => {
    if (type === "Text") content = getPropOrBind("text", "Text");
    if (type === "Button") content = getPropOrBind("label", "Button");
 
-   // Zapobieganie błędom w JSX jeśli content nie ma klamer (jest stringiem)
-   const formatContent = (val: string) => val.startsWith("{") ? val : `"${val}"`;
 
    switch (type) {
       case "Root":
@@ -52,19 +50,28 @@ const renderNodeToJsx = (node: CanvasNode, builderMode: string): string => {
       case "Card":
          return `<div${classNameAttr}${styleAttr}>\n${childrenJsx}\n</div>`;
       case "Heading":
-         return `<h2${classNameAttr}${styleAttr}>${content.startsWith("{") ? content : content}</h2>`;
+         return `<h2${classNameAttr}${styleAttr}>${content}</h2>`;
       case "Subheading":
-         return `<h3${classNameAttr}${styleAttr}>${content.startsWith("{") ? content : content}</h3>`;
+         return `<h3${classNameAttr}${styleAttr}>${content}</h3>`;
       case "Text":
-         return `<p${classNameAttr}${styleAttr}>${content.startsWith("{") ? content : content}</p>`;
+         return `<p${classNameAttr}${styleAttr}>${content}</p>`;
       case "Button":
-         return `<button${classNameAttr}${styleAttr}>${content.startsWith("{") ? content : content}</button>`;
+         return `<button${classNameAttr}${styleAttr}>${content}</button>`;
       case "Divider":
          return `<div${classNameAttr}${styleAttr} />`;
+      case "Image": {
+         const srcVal = getPropOrBind('src', '/placeholder.png');
+         const altVal = getPropOrBind('alt', 'Preview');
+         const fmtSrc = srcVal.startsWith("{") ? srcVal : `"${srcVal}"`;
+         const fmtAlt = altVal.startsWith("{") ? altVal : `"${altVal}"`;
+         return `<img src={${fmtSrc}}${classNameAttr}${styleAttr} alt={${fmtAlt}} />`;
+      }
+      case "Icon":
+         return `<div className="flex items-center justify-center p-1 text-[#f97316] font-bold">[Ikona: ${props.name || 'Heart'}]</div>`;
       case "Loop": {
          const listKey = props.listKey || "items";
          const listVar = builderMode === "component" ? listKey : `variables?.${listKey}`;
-         return `{variables?.${listKey}?.map((item: any, index: number) => (\n  <div key={index}${classNameAttr}${styleAttr}>\n${childrenJsx}\n  </div>\n))}`;
+         return `{${listVar}?.map((item: any, index: number) => (\n  <div key={index}${classNameAttr}${styleAttr}>\n${childrenJsx}\n  </div>\n))}`;
       }
       default:
          return `<div${classNameAttr}${styleAttr}>\n${childrenJsx}\n</div>`;
