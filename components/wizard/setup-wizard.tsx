@@ -2,15 +2,16 @@
 
 import { useState } from "react"
 import { Check, TerminalSquare, Loader2, Package, LayoutTemplate, ShieldAlert, Cloud, Store, Code2, ArrowLeft, Palette, Image as ImageIcon, Type, MapPin, Phone, Mail, Megaphone, Sparkles, MessageCircle, Calculator, HelpCircle, Layers, Eye, Github, Star } from "lucide-react"
+import { TRANSLATIONS } from "../../lib/translations"
 import { runSetupAction } from "../../lib/actions/setup-wizard"
 import { generateCopywriting } from "../../lib/actions/ai-generator"
 import { generateLivePreview } from "../../lib/actions/preview-builder"
 import { useEffect } from "react"
 
 const PROJECT_TYPES = [
-  { id: 'saas', name: 'SaaS Platforma', desc: 'Aplikacje B2B, modele subskrypcyjne (Stripe), analityka i monetyzacja API.', icon: Cloud },
-  { id: 'client', name: 'Wizytówka (MŚP)', desc: 'Szybkie i potężnie konwertujące strony dla firm usługowych i lokalnych.', icon: Store },
-  { id: 'portfolio', name: 'Agencja / Portfolio', desc: "Kreatywne i silnie animowane wizje wizytówkowe z wariantami Premium 3D.", icon: Code2 }
+  { id: 'saas', name: 'saas_name', desc: 'saas_desc', icon: Cloud },
+  { id: 'client', name: 'client_name', desc: 'client_desc', icon: Store },
+  { id: 'portfolio', name: 'portfolio_name', desc: "Kreatywne i silnie animowane wizje wizytówkowe z wariantami Premium 3D.", icon: Code2 }
 ]
 
 const TEMPLATES: Record<string, any[]> = {
@@ -56,18 +57,20 @@ const OPTIONAL_PACKAGES = [
   { id: 'sonner', name: 'Sonner Toasts', desc: 'Szybkie powiadomienia wyskakujące (Toaster).', category: 'ui', packages: ['sonner'], isDev: false, repo: 'https://sonner.emilkowal.ski' }
 ]
 
-const PACKAGE_CATEGORIES = [
-  { id: 'all', name: 'Wszystkie' },
-  { id: 'dev', name: 'DevOps & Narzędzia' },
-  { id: 'db', name: 'Bazy i ORM' },
-  { id: 'state', name: 'Stan & Dane' },
-  { id: 'auth', name: 'Autoryzacja' },
-  { id: 'ui', name: 'UI & Animacje' },
-  { id: 'api', name: 'API & SaaS' }
-]
-
 export default function SetupWizard() {
   const [step, setStep] = useState(1)
+  const [lang, setLang] = useState<"pl" | "en">("pl")
+  const t = (key: string) => TRANSLATIONS[lang][key] || key
+
+  const PACKAGE_CATEGORIES = [
+    { id: 'all', name: t('cat_all') },
+    { id: 'dev', name: t('cat_dev') },
+    { id: 'db', name: t('cat_db') },
+    { id: 'state', name: t('cat_state') },
+    { id: 'auth', name: t('cat_auth') },
+    { id: 'ui', name: t('cat_ui') },
+    { id: 'api', name: t('cat_api') }
+  ]
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   
@@ -218,21 +221,25 @@ export default function SetupWizard() {
                      </span>
                   )}
                </a>
+               <div className="flex border border-zinc-800 bg-[#0A0A0A] p-0.5">
+                  <button onClick={() => setLang('pl')} className={`px-2 py-1 text-[10px] font-bold ${lang === 'pl' ? 'bg-[#f97316] text-black' : 'text-zinc-500 hover:text-white'}`}>PL</button>
+                  <button onClick={() => setLang('en')} className={`px-2 py-1 text-[10px] font-bold ${lang === 'en' ? 'bg-[#f97316] text-black' : 'text-zinc-500 hover:text-white'}`}>EN</button>
+               </div>
             </div>
          </div>
 
          {/* -------------------- STEPS 1 & 2 (Uproszczone by utrzymać flow dla usera) -------------------- */}
          {step === 1 && (
             <div className="bg-[#0A0A0A] border-2 border-zinc-800 p-8 sm:p-10 max-w-4xl w-full shadow-2xl relative animate-in fade-in slide-in-from-bottom-8">
-               <div className="mb-8 border-b border-zinc-900 pb-6"><h2 className="text-3xl font-black uppercase tracking-tight">Określ Wektor Biznesowy (Krok 1)</h2></div>
+               <div className="mb-8 border-b border-zinc-900 pb-6"><h2 className="text-3xl font-black uppercase tracking-tight">{t('step1_title')}</h2></div>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                  {PROJECT_TYPES.map((type) => {
                     const Icon = type.icon
                     return (
                     <div key={type.id} onClick={() => { setSelectedType(type.id); setStep(2); }} className="p-6 border-2 border-zinc-800 hover:border-[#f97316] hover:bg-[#f97316]/5 bg-zinc-900/50 transition-all cursor-pointer flex flex-col items-center text-center">
                        <Icon size={40} className="mb-4 text-[#f97316]" />
-                       <h3 className="font-bold text-lg uppercase tracking-tight mb-2 text-white">{type.name}</h3>
-                       <p className="text-zinc-500 text-xs">{type.desc}</p>
+                       <h3 className="font-bold text-lg uppercase tracking-tight mb-2 text-white">{t(type.name)}</h3>
+                       <p className="text-zinc-500 text-xs">{t(type.desc)}</p>
                     </div>
                  )})}
                </div>
@@ -241,16 +248,16 @@ export default function SetupWizard() {
 
          {step === 2 && selectedType && (
             <div className="bg-[#0A0A0A] border-2 border-zinc-800 p-8 sm:p-10 max-w-4xl w-full shadow-2xl animate-in fade-in slide-in-from-right-8 text-center">
-               <h2 className="text-3xl font-black uppercase tracking-tight mb-8">Wybierz Moduł UI (Krok 2)</h2>
+               <h2 className="text-3xl font-black uppercase tracking-tight mb-8">{t('step2_title')}</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 text-left">
                  {TEMPLATES[selectedType].map((tmpl) => (
                     <div key={tmpl.id} onClick={() => { setSelectedTemplate(tmpl.id); setStep(3); }} className="p-6 border-2 border-zinc-800 hover:border-[#f97316] hover:bg-[#f97316]/5 bg-zinc-900/50 transition-all cursor-pointer group">
-                       <h3 className="font-bold text-xl uppercase tracking-tight mb-2 text-[#f97316] group-hover:text-white">{tmpl.name}</h3>
-                       <p className="text-zinc-400 text-sm">{tmpl.desc}</p>
+                       <h3 className="font-bold text-xl uppercase tracking-tight mb-2 text-[#f97316] group-hover:text-white">{t(tmpl.name) === tmpl.name ? tmpl.name : t(tmpl.name)}</h3>
+                       <p className="text-zinc-400 text-sm">{t(tmpl.desc) === tmpl.desc ? tmpl.desc : t(tmpl.desc)}</p>
                     </div>
                  ))}
                </div>
-               <button onClick={() => setStep(1)} className="text-zinc-500 hover:text-white text-xs uppercase tracking-widest font-bold">Wróć</button>
+               <button onClick={() => setStep(1)} className="text-zinc-500 hover:text-white text-xs uppercase tracking-widest font-bold">{t('back')}</button>
             </div>
          )}
          
@@ -262,15 +269,15 @@ export default function SetupWizard() {
                      <ArrowLeft size={20} />
                   </button>
                   <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316]">Architektura Biznesowa & AI</h2>
-                    <p className="text-zinc-400 mt-1">Skonfiguruj kontakt, zautomatyzowany copywriting sztucznej inteligencji oraz wbudowaną bazę danych w jednym kroku.</p>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316]">{t('step3_title')}</h2>
+                    <p className="text-zinc-400 mt-1">{t('step3_desc')}</p>
                   </div>
                </div>
 
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
                    
                    <div className="space-y-6">
-                       <h3 className="text-sm font-bold uppercase tracking-widest text-[#f97316] border-b border-zinc-800 pb-3 mb-4">Metadane Kontaktowe</h3>
+                       <h3 className="text-sm font-bold uppercase tracking-widest text-[#f97316] border-b border-zinc-800 pb-3 mb-4">{t('contact_metadata')}</h3>
                        <div className="space-y-3">
                           <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Phone size={14}/> Numer Telefonu</label>
                           <input type="text" value={branding.contactPhone} onChange={(e) => setBranding({...branding, contactPhone: e.target.value})} className="w-full h-12 bg-zinc-900 border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
@@ -284,7 +291,7 @@ export default function SetupWizard() {
                           <textarea rows={2} value={branding.address} onChange={(e) => setBranding({...branding, address: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 text-white focus:border-[#f97316] outline-none font-mono text-sm resize-none" />
                        </div>
                        <div className="space-y-3 pt-6 border-t border-zinc-800">
-                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2">Tracking ID (GA4/Pixel)</label>
+                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2">{t('analytics_id')}</label>
                           <input type="text" value={branding.analyticsId} onChange={(e) => setBranding({...branding, analyticsId: e.target.value})} placeholder="np. G-123456789" className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                        </div>
                    </div>
@@ -294,7 +301,7 @@ export default function SetupWizard() {
                          <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-6">
                             <div>
                                <h3 className="text-sm font-black uppercase tracking-widest text-[#f97316] flex items-center gap-2"><Sparkles size={16}/> AI SEO Wtrysk</h3>
-                               <p className="text-zinc-500 text-xs mt-1">Wygenereuj inteligentny copywriting do bazy źródłowej.</p>
+                               <p className="text-zinc-500 text-xs mt-1">{t('ai_injection_desc')}</p>
                             </div>
                             <label className="flex items-center cursor-pointer">
                                <div className="relative">
@@ -308,15 +315,15 @@ export default function SetupWizard() {
                          {branding.useAI && (
                             <div className="space-y-4 animate-in fade-in zoom-in-95">
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">Klucz dostępu (AI API KEY)</label>
+                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">{t('ai_key')}</label>
                                   <input type="password" value={branding.aiKey} onChange={(e) => setBranding({...branding, aiKey: e.target.value})} placeholder="sk-proj... / AIzaSy..." className="w-full h-10 bg-black border border-zinc-700 px-3 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                                </div>
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">Branża SEO (Słowa Kluczowe)</label>
+                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">{t('seo_keywords')}</label>
                                   <input type="text" value={branding.seoKeywords} onChange={(e) => setBranding({...branding, seoKeywords: e.target.value})} placeholder="np. medycyna, dentysta wrocław" className="w-full h-10 bg-black border border-zinc-700 px-3 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                                </div>
                                <div className="space-y-3">
-                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">Dodatkowy Tone of Voice</label>
+                                  <label className="text-[10px] font-bold text-zinc-400 uppercase">{t('tone')}</label>
                                   <textarea rows={2} value={branding.aiContext} onChange={(e) => setBranding({...branding, aiContext: e.target.value})} placeholder="np. Komunikuj się agresywnie i z humorem." className="w-full bg-black border border-zinc-700 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                                </div>
                             </div>
@@ -336,8 +343,8 @@ export default function SetupWizard() {
                           <div className={`dot absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition-transform ${branding.generateDatabase ? 'transform translate-x-6' : ''}`}></div>
                         </div>
                         <div>
-                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316]">Inżynieria Supabase (SQL Builder)</span>
-                           <p className="text-zinc-500 text-xs mt-1">LLM dopisze gotowe migracje bazy relacyjnej SQL pod twoją branżę. {!branding.useAI && '(Wymaga AI)'}</p>
+                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316]">{t('supabase_name')}</span>
+                           <p className="text-zinc-500 text-xs mt-1">{t('supabase_desc')} {!branding.useAI && t('requires_ai')}</p>
                         </div>
                      </label>
 
@@ -348,8 +355,8 @@ export default function SetupWizard() {
                           <div className={`dot absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition-transform ${branding.injectTailwindVars ? 'transform translate-x-6' : ''}`}></div>
                         </div>
                         <div>
-                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316] transition-colors">Globalne CSS (Tailwind Injector)</span>
-                           <p className="text-zinc-500 text-xs mt-1">Zastąp inline styles globalnymi klasami Tailwind.</p>
+                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316] transition-colors">{t('tailwind_vars_name')}</span>
+                           <p className="text-zinc-500 text-xs mt-1">{t('tailwind_vars_desc')}</p>
                         </div>
                      </label>
 
@@ -360,8 +367,8 @@ export default function SetupWizard() {
                           <div className={`dot absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition-transform ${branding.generateTopology ? 'transform translate-x-6' : ''}`}></div>
                         </div>
                         <div>
-                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316] transition-colors">Generatywna Topologia Zagnieżdżeń</span>
-                           <p className="text-zinc-500 text-xs mt-1">AI dopisze ci 2 potężne gotowe, fizyczne podstrony URL do projektu z route group! {!branding.useAI && '(Wymaga AI)'}</p>
+                           <span className="font-bold text-sm uppercase tracking-widest text-[#f97316] transition-colors">{t('topology_name')}</span>
+                           <p className="text-zinc-500 text-xs mt-1">{t('topology_desc')} {!branding.useAI && t('requires_ai')}</p>
                         </div>
                      </label>
                   </div>
@@ -370,7 +377,7 @@ export default function SetupWizard() {
                <div className="flex justify-end pt-8 mt-8 border-t border-zinc-900">
                   <button onClick={handleGenerateAIAndProceed} disabled={isGeneratingAI} className="bg-[#f97316] text-black font-black uppercase tracking-widest px-10 py-5 hover:bg-white transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)] flex items-center justify-center min-w-[300px]">
                      {isGeneratingAI ? <Loader2 size={24} className="animate-spin mr-3" /> : null}
-                     {isGeneratingAI ? 'Analiza AI w toku...' : (branding.useAI ? '✨ Zezwól AI na Copywriting & Kontynuuj' : 'Dalej: Wizualny Kreator (4)')}
+                     {isGeneratingAI ? t('analyzing') : (branding.useAI ? t('ai_proceed') : t('visual_builder_btn'))}
                   </button>
                </div>
             </div>
@@ -388,8 +395,8 @@ export default function SetupWizard() {
                       <button onClick={() => setStep(3)} className="flex items-center gap-2 text-zinc-500 hover:text-white uppercase tracking-widest text-xs font-bold mb-4">
                          <ArrowLeft size={14}/> Wróć
                       </button>
-                      <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316] leading-none mb-2">Visual <br/>Builder</h2>
-                      <p className="text-zinc-400 text-xs">Podejmuj decyzje wizualne na żywo. Pełen pogląd.</p>
+                      <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316] leading-none mb-2">{t('visual_builder')}</h2>
+                      <p className="text-zinc-400 text-xs">{t('visual_builder_desc')}</p>
                    </div>
                    
                    <div className="p-6 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
@@ -416,14 +423,14 @@ export default function SetupWizard() {
 
                          
                          <div className="pt-6 border-t border-zinc-900 space-y-6">
-                            <h3 className="text-[10px] font-black uppercase text-[#f97316]">Edytor Treści & Odnośników</h3>
+                            <h3 className="text-[10px] font-black uppercase text-[#f97316]">{t('content_editor')}</h3>
                             <div className="space-y-3">
-                               <label className="text-xs font-bold text-zinc-400 uppercase">Główny Nagłówek (Hero Title)</label>
+                               <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_title_editor')}</label>
                                <textarea rows={2} value={branding.heroTitle || ''} onChange={(e) => setBranding({...branding, heroTitle: e.target.value})} placeholder="np. Zbuduj swój <br/> wspaniały startup <span style='color: var(--mdk-primary)'>z MDK.</span>" className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                                <p className="text-[9px] text-zinc-600">Tip: Użyj &lt;br/&gt; i &lt;span style=...&gt;</p>
                             </div>
                             <div className="space-y-3">
-                               <label className="text-xs font-bold text-zinc-400 uppercase">Opis Poboczny (Hero Desc)</label>
+                               <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_desc_editor')}</label>
                                <textarea rows={2} value={branding.heroDesc || ''} onChange={(e) => setBranding({...branding, heroDesc: e.target.value})} placeholder="np. Platforma do kreowania oprogramowania..." className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                             </div>
                          </div>
@@ -456,7 +463,7 @@ export default function SetupWizard() {
                             </div>
                              <div className="pt-6 border-t border-zinc-900 space-y-4">
                                 <h3 className="text-[10px] font-black uppercase text-[#f97316] flex items-center justify-between">
-                                    Sklep Modułów (Premium MDK) 
+                                    {t('premium_modules')} 
                                     {downloadingModule && <span className="text-white flex items-center gap-1"><Loader2 size={10} className="animate-spin" /> {downloadingModule}</span>}
                                 </h3>
                                  <div className="space-y-2">
@@ -501,7 +508,7 @@ export default function SetupWizard() {
 
                     <div className="p-6 border-t border-zinc-900 shrink-0">
                        <button onClick={() => setStep(5)} disabled={downloadingModule !== null} className={`w-full text-black font-black uppercase tracking-widest py-4 transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)] ${downloadingModule !== null ? 'bg-zinc-700 cursor-not-allowed text-zinc-500' : 'bg-[#f97316] hover:bg-white'}`}>
-                          {downloadingModule ? 'Pobieranie...' : 'Dalej: Narzędzia (5)'}
+                          {downloadingModule ? t('downloading') : t('goto_packages_btn')}
                        </button>
                     </div>
                 </div>
@@ -519,7 +526,7 @@ export default function SetupWizard() {
                            <iframe src="/live-preview" className="absolute inset-0 w-full h-full border-0 bg-transparent z-10" />
                            <div className="absolute inset-0 flex flex-col items-center justify-center -z-10 bg-black/50">
                                <Loader2 size={32} className="animate-spin text-zinc-500 mb-4" />
-                               <span className="font-mono text-xs uppercase tracking-widest text-zinc-600">Trwa kompilacja HMR...</span>
+                               <span className="font-mono text-xs uppercase tracking-widest text-zinc-600">{t('live_preview_loading')}</span>
                            </div>
                         </div>
                     </div>
@@ -536,8 +543,8 @@ export default function SetupWizard() {
                      <ArrowLeft size={20} />
                   </button>
                   <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316]">Narzędzia Deweloperskie</h2>
-                    <p className="text-zinc-400 mt-1">Zaznacz dodatkowe pakiety, które zostaną zainstalowane i skonfigurowane na dysku.</p>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#f97316]">{t('step5_title')}</h2>
+                    <p className="text-zinc-400 mt-1">{t('step5_desc')}</p>
                   </div>
                </div>
 
@@ -574,6 +581,10 @@ export default function SetupWizard() {
                               <a href={pkg.repo} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-[10px] uppercase font-mono text-zinc-500 hover:text-[#f97316] flex items-center gap-1">
                                  <Package size={12} /> Repo
                               </a>
+               <div className="flex border border-zinc-800 bg-[#0A0A0A] p-0.5">
+                  <button onClick={() => setLang('pl')} className={`px-2 py-1 text-[10px] font-bold ${lang === 'pl' ? 'bg-[#f97316] text-black' : 'text-zinc-500 hover:text-white'}`}>PL</button>
+                  <button onClick={() => setLang('en')} className={`px-2 py-1 text-[10px] font-bold ${lang === 'en' ? 'bg-[#f97316] text-black' : 'text-zinc-500 hover:text-white'}`}>EN</button>
+               </div>
                            </div>
                         </div>
                      )
@@ -582,7 +593,7 @@ export default function SetupWizard() {
 
                <div className="flex justify-end pt-8 mt-8 border-t border-zinc-900">
                   <button onClick={() => setStep(6)} className="bg-[#f97316] text-black font-black uppercase tracking-widest px-10 py-5 hover:bg-white transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)]">
-                     Dalej: .env.local (Krok 6)
+                     {t('goto_env_btn')}
                   </button>
                </div>
             </div>
@@ -596,8 +607,8 @@ export default function SetupWizard() {
                      <ArrowLeft size={20} />
                   </button>
                   <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#EAB308]">Środowisko API (.env.local)</h2>
-                    <p className="text-zinc-400 mt-1">Ułatwienie dla deweloperów. Wklej tutaj klucze do Supabase, a instalator automatycznie wygeneruje chroniony plik .env.local na Twoim dysku ułatwiając całą pracę z plikami ukrytymi.</p>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-[#EAB308]">{t('step6_title')}</h2>
+                    <p className="text-zinc-400 mt-1">{t('step6_desc')}</p>
                   </div>
                </div>
 
@@ -618,7 +629,7 @@ export default function SetupWizard() {
 
                <div className="flex justify-end pt-8 mt-8 border-t border-zinc-900">
                   <button onClick={() => setStep(7)} className="bg-[#EAB308] text-black font-black uppercase tracking-widest px-10 py-5 hover:bg-white transition-all transform hover:scale-[1.02] shadow-[0_0_40px_rgba(234,179,8,0.3)]">
-                     Wygeneruj Pełną Aplikację (Zakończ)
+                     {t('final_submit_btn')}
                   </button>
                </div>
             </div>
@@ -628,10 +639,10 @@ export default function SetupWizard() {
          {/* -------------------- Krok 7: Egzekucja Terminalowa -------------------- */}
          {step === 7 && (
             <div className="bg-[#0A0A0A] border-2 border-white p-8 sm:p-12 max-w-4xl w-full flex flex-col animate-in fade-in zoom-in duration-500">
-               <h2 className="text-4xl font-black uppercase tracking-tight mb-8 text-center">Finałowa Kompilacja</h2>
+               <h2 className="text-4xl font-black uppercase tracking-tight mb-8 text-center">{t('final_build')}</h2>
 
                <div className="bg-black border border-zinc-800 rounded p-6 h-64 overflow-y-auto font-mono text-sm leading-loose mb-10 flex flex-col gap-2 relative">
-                  {logs.length === 0 && <span className="text-zinc-500">Node.js oczekuje na komendę wstrzyknięcia...</span>}
+                  {logs.length === 0 && <span className="text-zinc-500">{t('wait_script')}</span>}
                   
                   {logs.map((log, i) => (
                     <div key={i} className="flex gap-4">
@@ -652,14 +663,14 @@ export default function SetupWizard() {
                      disabled={isInstalling || logs.some(l => l.includes('SUCCESS'))}
                      className="bg-white text-black font-black text-xl uppercase tracking-widest px-8 py-6 hover:bg-[#EAB308] transition-colors disabled:opacity-0 disabled:pointer-events-none"
                   >
-                     URUCHOM SKRYPT GENERATORA
+                     {t('run_generator_btn')}
                   </button>
                ) : (
                   <button 
                      onClick={() => { setLogs([]); setStep(6); }}
                      className="bg-red-900/50 border border-red-500 text-red-100 font-black text-xl uppercase tracking-widest px-8 py-6 hover:bg-red-500 transition-colors"
                   >
-                     WRÓĆ I POPRAW KONFIGURACJĘ API (KROK 6)
+                     {t('fix_config_btn')}
                   </button>
                )}
             </div>
