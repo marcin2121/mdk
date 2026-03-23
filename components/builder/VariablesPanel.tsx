@@ -1,0 +1,108 @@
+"use client";
+
+import { useBuilderStore } from "@/lib/store/builder-store";
+import { Plus, Trash2, Database } from "lucide-react";
+import { useState } from "react";
+
+export default function VariablesPanel() {
+  const { variables, addVariable, removeVariable } = useBuilderStore();
+  
+  const [name, setName] = useState("");
+  const [type, setType] = useState<"string" | "number">("string");
+  const [defaultValue, setDefaultValue] = useState("");
+
+  const handleAdd = (e: React.FormEvent) => {
+     e.preventDefault();
+     if (!name.trim()) return;
+
+     // Zabezpieczenie przed specyficznymi znakami
+     const safeName = name.replace(/[^a-zA-Z0-9_]/g, "");
+     addVariable(safeName, type, defaultValue);
+
+     setName("");
+     setDefaultValue("");
+  };
+
+  return (
+    <div className="flex-1 flex flex-col h-full bg-[#050505]/50">
+        
+        {/* FORMULARZ ADD */}
+        <form onSubmit={handleAdd} className="p-4 border-b border-zinc-900 bg-zinc-900/10 space-y-3">
+             <h4 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-1">
+                 <Plus size={12} className="text-[#f97316]"/> Dodaj Props / Zmienną
+             </h4>
+
+             <div className="space-y-1">
+                 <label className="text-[9px] font-bold text-zinc-500 uppercase">Nazwa (camelCase)</label>
+                 <input 
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="np. title, count"
+                    className="w-full bg-black border border-zinc-800 text-white font-mono text-xs h-8 px-2 outline-none focus:border-[#f97316] rounded-sm"
+                 />
+             </div>
+
+             <div className="grid grid-cols-2 gap-2">
+                 <div className="space-y-1">
+                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Typ</label>
+                     <select 
+                        value={type}
+                        onChange={(e) => setType(e.target.value as "string" | "number")}
+                        className="w-full bg-black border border-zinc-800 text-white text-xs h-8 px-1 outline-none focus:border-[#f97316] rounded-sm"
+                     >
+                         <option value="string">String</option>
+                         <option value="number">Number</option>
+                     </select>
+                 </div>
+                 <div className="space-y-1">
+                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Wart. Domyślna</label>
+                     <input 
+                        type="text"
+                        value={defaultValue}
+                        onChange={(e) => setDefaultValue(e.target.value)}
+                        placeholder="np. Hello"
+                        className="w-full bg-black border border-zinc-800 text-white text-xs h-8 px-2 outline-none focus:border-[#f97316] rounded-sm"
+                     />
+                 </div>
+             </div>
+
+             <button type="submit" className="w-full bg-[#f97316] hover:bg-white text-black font-bold uppercase tracking-widest text-[10px] py-2 rounded-md transition-colors flex items-center justify-center gap-1 shadow-lg mt-2">
+                 <Plus size={12} /> Dodaj Wynik
+             </button>
+        </form>
+
+        {/* LISTA ZMIENNYCH */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+             <h4 className="text-[10px] font-black text-zinc-500 tracking-widest uppercase mb-3 flex items-center gap-1">
+                 <Database size={12}/> Aktywne Propsy
+             </h4>
+
+             {Object.keys(variables).length === 0 ? (
+                <div className="text-center text-zinc-600 text-[10px] py-10 font-mono">
+                    Brak zdefiniowanych zmiennych.<br/>Dodaj zmienną u góry.
+                </div>
+             ) : (
+                Object.entries(variables).map(([vName, vData]) => (
+                   <div key={vName} className="flex items-center justify-between p-2 bg-zinc-900 border border-zinc-800 rounded-md group">
+                       <div>
+                           <span className="text-xs font-bold text-white font-mono">{vName}</span>
+                           <span className="text-[9px] text-zinc-500 ml-2">({vData.type})</span>
+                           {vData.default && (
+                             <p className="text-[9px] text-zinc-600 truncate max-w-[140px]">Domyślnie: "{vData.default}"</p>
+                           )}
+                       </div>
+                       <button 
+                          onClick={() => removeVariable(vName)}
+                          className="w-6 h-6 flex items-center justify-center text-zinc-600 hover:text-red-500 transition-colors"
+                       >
+                          <Trash2 size={12} />
+                       </button>
+                   </div>
+                ))
+             )}
+        </div>
+
+    </div>
+  );
+}
