@@ -9,12 +9,24 @@ export async function generateLivePreview(templateId: string, branding: any) {
         
         const isEn = branding.lang === 'en';
         let rawCodeStr = "";
+        const templatesDir = path.join(process.cwd(), '..', 'mdk-registry', 'templates');
+        const exactPath = path.join(templatesDir, isEn ? `${templateId}-en.txt` : `${templateId}.txt`);
+        const fallbackIdPath = path.join(templatesDir, `${templateId}.txt`);
+        const ultimateFallback = path.join(templatesDir, isEn ? 'saas-ai-en.txt' : 'saas-ai.txt');
+
         try {
-            const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', isEn ? `${templateId}-en.txt` : `${templateId}.txt`);
-            rawCodeStr = fs.readFileSync(registryPath, 'utf-8');
+            if (fs.existsSync(exactPath)) {
+                rawCodeStr = fs.readFileSync(exactPath, 'utf-8');
+            } else if (fs.existsSync(fallbackIdPath)) {
+                // If English specific doesn't exist, try the base one
+                rawCodeStr = fs.readFileSync(fallbackIdPath, 'utf-8');
+            } else {
+                rawCodeStr = fs.readFileSync(ultimateFallback, 'utf-8');
+            }
         } catch(e) {
-            const fallbackPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', isEn ? 'saas-ai-en.txt' : 'saas-ai.txt');
-            rawCodeStr = fs.readFileSync(fallbackPath, 'utf-8');
+            console.error(`[Molenda CLI] Template loading failed for ${templateId}`, e);
+            // absolute desperate fallback
+            try { rawCodeStr = fs.readFileSync(path.join(templatesDir, 'saas-ai.txt'), 'utf-8'); } catch(err) {}
         }
 
         const brandName = branding.companyName || "MDK STARTUP"
@@ -117,19 +129,33 @@ export async function generateLivePreview(templateId: string, branding: any) {
                                    .replace(/className="border-\[var\(--mdk-primary\)\]/g, `style={{ borderColor: '${primaryColor}' }} className="`);
 
         // Handle font family injection inline for preview
-        const fontStr = branding.typography === 'inter' ? 'Inter, sans-serif' : branding.typography === 'playfair' ? 'Playfair Display, serif' : branding.typography === 'outfit' ? 'Outfit, sans-serif' : 'Geist, sans-serif';
+        let fontCssValue = '"Geist", sans-serif'; // CSS font-family value with proper quoting
+        let fontCdn = '';
         
-        let fontCdn = "https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap";
-        if (branding.typography === 'playfair') fontCdn = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap";
-        if (branding.typography === 'outfit') fontCdn = "https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap";
+        if (branding.typography === 'inter') {
+            fontCssValue = '"Inter", sans-serif';
+            fontCdn = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap';
+        } else if (branding.typography === 'playfair') {
+            fontCssValue = '"Playfair Display", serif';
+            fontCdn = 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap';
+        } else if (branding.typography === 'outfit') {
+            fontCssValue = '"Outfit", sans-serif';
+            fontCdn = 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap';
+        }
 
-        // Wstrzyknij link CDN style i * { font-family }
-        if (compiledCode.includes('return (\n')) {
-            compiledCode = compiledCode.replace('return (\n', `return (\n    <>\n      <link rel="stylesheet" href="${fontCdn}" />\n      <style>{\`* { font-family: "${fontStr}" !important; }\`}</style>\n`);
-            compiledCode = compiledCode.replace(');\n}', '\n    </>\n  );\n}');
-        } else {
-            compiledCode = compiledCode.replace('return (', `return (\n    <>\n      <link rel="stylesheet" href="${fontCdn}" />\n      <style>{\`* { font-family: "${fontStr}" !important; }\`}</style>\n`);
-            compiledCode = compiledCode.replace(');', '\n    </>\n  );');
+        // Inject CDN link and * { font-family } into the template
+        // Use regex to handle both LF and CRLF line endings
+        if (fontCdn) {
+            const returnMatch = compiledCode.match(/return\s*\(\s*[\r\n]/);
+            if (returnMatch) {
+                const matchStr = returnMatch[0];
+                compiledCode = compiledCode.replace(matchStr, `${matchStr}    <>\n      <link rel="stylesheet" href="${fontCdn}" />\n      <style>{\`* { font-family: ${fontCssValue} !important; }\`}</style>\n`);
+                // Close the fragment before the last );
+                const lastClose = compiledCode.lastIndexOf(');');
+                if (lastClose > 0) {
+                    compiledCode = compiledCode.slice(0, lastClose) + '\n    </>\n  );' + compiledCode.slice(lastClose + 2);
+                }
+            }
         }
 
 

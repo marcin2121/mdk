@@ -21,6 +21,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
      client_desc: "Szybkie i potężnie konwertujące strony dla firm usługowych i lokalnych.",
      portfolio_name: "Agencja / Portfolio",
      portfolio_desc: "Kreatywne i silnie animowane wizje wizytówkowe z wariantami Premium 3D.",
+     dashboard_name: "Panel Admina / Dashboard",
+     dashboard_desc: "Nowoczesne panele do zarządzania danymi, statystykami i użytkownikami.",
 
      // Step 2
      step2_title: "Wybierz Moduł UI (Krok 2)",
@@ -131,6 +133,12 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
      tmpl_client_beauty_desc: "Trzysekcyjny klasyk: O nas, Pełna sekcja adresowo-kontaktowa oraz Cennik.",
      tmpl_portfolio_minimal_name: "Minimal & Typo",
      tmpl_portfolio_minimal_desc: "Zatopienie układu w bezwględnej ciemności napędzanej olbrzymią typografią i wireframami.",
+     tmpl_digital_commerce_name: "E-Learning & Digital",
+     tmpl_digital_commerce_desc: "Ciemny landing z gridami na kursy, ebooki i produkty cyfrowe.",
+     tmpl_agency_name: "Creative Agency 2026",
+     tmpl_agency_desc: "Dynamiczny panel z animacjami Framer Motion dla nowoczesnych marek.",
+     tmpl_dashboard_name: "Corporate Dashboard",
+     tmpl_dashboard_desc: "Zaawansowany panel boczny z wykresami, statystykami i listą transakcji.",
 
      // Pakiety Krok 5
      prettier_desc: "Automatyczne formatowanie kodu i sortowanie klas.",
@@ -280,6 +288,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
      client_desc: "Compact landing page for local business, B2C offers, and lead generation.",
      portfolio_name: "Agency / Portfolio",
      portfolio_desc: "Creative and highly animated postcard visions with Premium 3D variants.",
+     dashboard_name: "Admin Panel / Dashboard",
+     dashboard_desc: "Modern panels for data management, statistics, and user control.",
      
 // Templates Krok 2
      tmpl_saas_ai_name: "AI SaaS Dashboard",
@@ -288,6 +298,12 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
      tmpl_client_beauty_desc: "Three-section classic: About Us, Address & Contact, and Pricing.",
      tmpl_portfolio_minimal_name: "Minimal & Typo",
      tmpl_portfolio_minimal_desc: "Submerge layout in absolute darkness powered by massive typography and wireframes.",
+     tmpl_digital_commerce_name: "E-Learning & Digital",
+     tmpl_digital_commerce_desc: "Dark landing layout for courses, ebooks, and digital asset commerce.",
+     tmpl_agency_name: "Creative Agency 2026",
+     tmpl_agency_desc: "Dynamic panel with Framer Motion animations for modern brands.",
+     tmpl_dashboard_name: "Corporate Dashboard",
+     tmpl_dashboard_desc: "Advanced sidebar layout featuring charts, statistics, and transaction lists.",
 
      // Pakiety Krok 5
      prettier_desc: "Auto-formatting of code and sorting classes.",

@@ -11,18 +11,24 @@ import { useEffect } from "react"
 const PROJECT_TYPES = [
   { id: 'saas', name: 'saas_name', desc: 'saas_desc', icon: Cloud },
   { id: 'client', name: 'client_name', desc: 'client_desc', icon: Store },
-  { id: 'portfolio', name: 'portfolio_name', desc: "portfolio_desc", icon: Code2 }
+  { id: 'portfolio', name: 'portfolio_name', desc: "portfolio_desc", icon: Code2 },
+  { id: 'dashboard', name: 'dashboard_name', desc: 'dashboard_desc', icon: LayoutTemplate }
 ]
 
 const TEMPLATES: Record<string, any[]> = {
   saas: [
-    { id: 'saas-ai', name: 'tmpl_saas_ai_name', desc: 'tmpl_saas_ai_desc', packages: ['lucide-react', 'clsx'] }
+    { id: 'saas-ai', name: 'tmpl_saas_ai_name', desc: 'tmpl_saas_ai_desc', packages: ['lucide-react', 'clsx'] },
+    { id: 'digital-commerce', name: 'tmpl_digital_commerce_name', desc: 'tmpl_digital_commerce_desc', packages: ['lucide-react', 'framer-motion'] }
   ],
   client: [
-    { id: 'client-beauty', name: 'tmpl_client_beauty_name', desc: 'tmpl_client_beauty_desc', packages: ['lucide-react'] }
+    { id: 'client-beauty', name: 'tmpl_client_beauty_name', desc: 'tmpl_client_beauty_desc', packages: ['lucide-react'] },
+    { id: 'agency-modern', name: 'tmpl_agency_name', desc: 'tmpl_agency_desc', packages: ['lucide-react', 'framer-motion'] }
   ],
   portfolio: [
     { id: 'portfolio-minimal', name: 'tmpl_portfolio_minimal_name', desc: 'tmpl_portfolio_minimal_desc', packages: ['lucide-react'] }
+  ],
+  dashboard: [
+    { id: 'dashboard-admin', name: 'tmpl_dashboard_name', desc: 'tmpl_dashboard_desc', packages: ['lucide-react'] }
   ]
 }
 
