@@ -4,7 +4,7 @@
 
 > Clone. Run. Configure visually. Ship.
 
-![MDK Setup Wizard Walkthrough](file:///C:/Users/marci/.gemini/antigravity/brain/0fcd016a-fc95-4bc3-8f72-1117a2c8b5dd/mdk_wizard_walkthrough_1774298996495.webp)
+![MDK Setup Wizard Walkthrough](./docs/walkthrough.webp)
 
 MDK (Molenda Development Kit) is an open-source Next.js starter kit that replaces the traditional "clone and manually edit 20 files" workflow with a **built-in visual Setup Wizard**. On first run, Edge Middleware intercepts the request and boots an immersive graphical installer — right in your browser.
 
