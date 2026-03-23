@@ -7,16 +7,19 @@ import { Trash2, Palette, Type } from "lucide-react";
 export default function Inspector() {
   const { nodes, selectedNodeId, updateNodeProps, removeNode, builderMode, variables, updateNodeBinding } = useBuilderStore();
 
-  const findActiveNode = (nodeList: CanvasNode[], searchId: string): CanvasNode | null => {
-      for (const n of nodeList) {
-         if (n.id === searchId) return n;
-         if (n.children && n.children.length > 0) {
-            const found = findActiveNode(n.children, searchId);
-            if (found) return found;
-         }
-      }
-      return null;
-  };
+  const activeNode = useBuilderStore((s) => {
+     const findNode = (list: CanvasNode[], id: string): CanvasNode | null => {
+        for (const n of list) {
+           if (n.id === id) return n;
+           if (n.children && n.children.length > 0) {
+              const found = findNode(n.children, id);
+              if (found) return found;
+           }
+        }
+        return null;
+     };
+     return s.selectedNodeId ? findNode(s.nodes, s.selectedNodeId) : null;
+  });
   
   const STYLE_PRESETS: Record<string, string> = {
     glass: "backdrop-blur-md bg-white/10 border border-white/20 shadow-xl",
@@ -35,7 +38,7 @@ export default function Inspector() {
      updateNodeProps(node.id, { className: classes.join(" ").trim() });
   };
 
-  const activeNode = selectedNodeId ? findActiveNode(nodes, selectedNodeId) : null;
+
 
   if (!selectedNodeId) {
      return (
@@ -57,9 +60,8 @@ export default function Inspector() {
   };
 
   const toggleTailwindClass = (category: string, removePrefixes: string[], addClass: string) => {
-      if (!activeNode.props.className) activeNode.props.className = "";
-      
-      let classes = activeNode.props.className.split(" ").filter(Boolean);
+       const className = activeNode.props.className ?? "";
+       let classes = className.split(" ").filter(Boolean);
 
       // Usunięcie kolidujących klas na bazie prefiksów
       classes = classes.filter((c: string) => {

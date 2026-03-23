@@ -20,7 +20,7 @@ export interface BuilderStore {
   setNodes: (nodes: CanvasNode[]) => void;
   addNode: (node: CanvasNode, parentId?: string, index?: number) => void;
   removeNode: (id: string) => void;
-  updateNodeProps: (id: string, props: Record<string, any>) => void;
+  updateNodeProps: (id: string, props: Partial<CanvasNode['props']>) => void;
   selectNode: (id: string | null) => void;
   setHoveredNode: (id: string | null) => void;
   moveNode: (activeId: string, overId: string, isOverContainer: boolean) => void;
@@ -49,7 +49,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
   variables: {},
 
   setNodes: (nodes) => set((state) => ({ 
-     past: [...state.past, structuredClone(state.nodes)],
+     past: [...state.past.slice(-49), structuredClone(state.nodes)],
      future: [],
      nodes 
   })),
@@ -76,7 +76,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
 
     insertIntoChildren(newNodes);
     return { 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: newNodes 
     };
@@ -102,14 +102,14 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
     removeFromChildren(newNodes);
     
     return { 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: newNodes, 
       selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId 
     };
   }),
 
-  updateNodeProps: (id, props) => set((state) => {
+  updateNodeProps: (id, props: Partial<CanvasNode['props']>) => set((state) => {
     const newNodes = structuredClone(state.nodes);
 
     const updateInChildren = (children: CanvasNode[]) => {
@@ -127,7 +127,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
 
     updateInChildren(newNodes);
     return { 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: newNodes 
     };
@@ -154,7 +154,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
     
     insertAdj(newNodes);
     return { 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: newNodes 
     };
@@ -206,7 +206,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
     }
 
     return { 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: newNodes 
     };
@@ -233,7 +233,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
     const newFuture = state.future.slice(1);
     
     return {
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       nodes: next,
       future: newFuture,
       selectedNodeId: null
@@ -241,7 +241,7 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
   }),
   
   clearCanvas: () => set((state) => ({ 
-      past: [...state.past, structuredClone(state.nodes)],
+      past: [...state.past.slice(-49), structuredClone(state.nodes)],
       future: [],
       nodes: [{ 
         id: "root", 
@@ -289,6 +289,6 @@ export const useBuilderStore = create<BuilderStore>((set) => ({
       };
 
       updateBinding(newNodes);
-      return { nodes: newNodes };
+      return { past: [...state.past.slice(-49), structuredClone(state.nodes)], future: [], nodes: newNodes };
   })
 }));

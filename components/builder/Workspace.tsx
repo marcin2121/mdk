@@ -1,10 +1,19 @@
 "use client";
 
 import { useBuilderStore } from "@/lib/store/builder-store";
-import { CanvasNode } from "@/lib/types/builder";
+import { CanvasNode, CONTAINER_TYPES } from "@/lib/types/builder";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
 
-const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer, depth }: any) => {
+interface CanvasNodeContainerProps {
+  node: CanvasNode;
+  children?: React.ReactNode;
+  isSelected: boolean;
+  onClick: (e: React.MouseEvent) => void;
+  isContainer: boolean;
+  depth: number;
+}
+
+const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer, depth }: CanvasNodeContainerProps) => {
   const { builderMode } = useBuilderStore();
   const { attributes, listeners, setNodeRef: setDragRef, isDragging } = useDraggable({
     id: node.id,
@@ -70,7 +79,7 @@ export default function BuilderWorkspace() {
       selectNode(node.id);
     };
 
-    const isContainer = ["Section", "Column", "Root", "Grid2", "Grid3", "Card"].includes(node.type);
+    const isContainer = (CONTAINER_TYPES as unknown as string[]).includes(node.type);
 
     return (
        <CanvasNodeContainer 
