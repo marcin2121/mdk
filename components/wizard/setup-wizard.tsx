@@ -81,10 +81,10 @@ export default function SetupWizard() {
      heroDesc: '',
      primaryColor: '#f97316',
      heroImageUrl: '',
-     ctaText: 'Rozpocznij',
-     contactPhone: '+48 500 000 000',
-     contactEmail: 'biuro@firma.pl',
-     address: 'ul. Architektoniczna 1, Warszawa',
+     ctaText: '',
+     contactPhone: '',
+     contactEmail: '',
+     address: '',
      useAI: false,
      aiProvider: 'openai',
      aiModel: 'gpt-4o-mini',
@@ -136,7 +136,7 @@ export default function SetupWizard() {
   useEffect(() => {
      if(step !== 4) return;
      const timer = setTimeout(async () => {
-         const res = await generateLivePreview(selectedTemplate || 'saas-ai', branding);
+         const res = await generateLivePreview(selectedTemplate || 'saas-ai', { ...branding, lang });
          if(res?.timestamp) {
              // Nie zmieniamy klucza Iframe żeby Next.js Hot Reload zadziałał gładko przez stelaż!
              console.log('[MDK Live Preview] Nowy build hmr zrzucony do /live-preview');
@@ -154,7 +154,7 @@ export default function SetupWizard() {
       }
       setIsGeneratingAI(true);
       setLogs(prev => [...prev, `[MDK AI] Wytwarzanie copywritingu dla podglądu lądowania...`]);
-      const res = await generateCopywriting(branding);
+      const res = await generateCopywriting({ ...branding, lang });
       setIsGeneratingAI(false);
       if(res.error) {
          setLogs(prev => [...prev, `[MDK AI BŁĄD] ${res.error}`]);
@@ -214,7 +214,7 @@ export default function SetupWizard() {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest border border-zinc-800 bg-[#0A0A0A] py-2 px-4 inline-block">MDK System Initializer</p>
                <a href="https://github.com/marcin2121/mdk" target="_blank" rel="noreferrer" className="flex items-center gap-2 border border-zinc-800 bg-[#0A0A0A] hover:bg-zinc-900 transition-colors py-2 px-4 text-xs font-bold uppercase tracking-widest text-white shadow-[0_0_15px_rgba(234,179,8,0.15)] group">
-                  <Star size={14} className="text-[#EAB308] group-hover:fill-[#EAB308] transition-all" /> Daj gwiazdkę
+                  <Star size={14} className="text-[#EAB308] group-hover:fill-[#EAB308] transition-all" /> {t('star_mdk')}
                   {starCount !== null && (
                      <span className="ml-1 px-1.5 py-0.5 bg-zinc-800 text-[10px] text-zinc-400 font-mono">
                         {starCount}
@@ -279,20 +279,20 @@ export default function SetupWizard() {
                    <div className="space-y-6">
                        <h3 className="text-sm font-bold uppercase tracking-widest text-[#f97316] border-b border-zinc-800 pb-3 mb-4">{t('contact_metadata')}</h3>
                        <div className="space-y-3">
-                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Phone size={14}/> Numer Telefonu</label>
-                          <input type="text" value={branding.contactPhone} onChange={(e) => setBranding({...branding, contactPhone: e.target.value})} className="w-full h-12 bg-zinc-900 border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
+                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Phone size={14}/> {t('phone')}</label>
+                          <input type="text" value={branding.contactPhone} onChange={(e) => setBranding({...branding, contactPhone: e.target.value})} placeholder={t('phone_placeholder')} className="w-full h-12 bg-zinc-900 border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                        </div>
                        <div className="space-y-3">
-                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Mail size={14}/> Adres E-mail</label>
-                          <input type="text" value={branding.contactEmail} onChange={(e) => setBranding({...branding, contactEmail: e.target.value})} className="w-full h-12 bg-zinc-900 border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
+                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Mail size={14}/> {t('email')}</label>
+                          <input type="text" value={branding.contactEmail} onChange={(e) => setBranding({...branding, contactEmail: e.target.value})} placeholder={t('email_placeholder')} className="w-full h-12 bg-zinc-900 border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                        </div>
                        <div className="space-y-3">
-                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><MapPin size={14}/> Pełny Adres Siedziby</label>
-                          <textarea rows={2} value={branding.address} onChange={(e) => setBranding({...branding, address: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 text-white focus:border-[#f97316] outline-none font-mono text-sm resize-none" />
+                          <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><MapPin size={14}/> {t('address')}</label>
+                          <textarea rows={2} value={branding.address} onChange={(e) => setBranding({...branding, address: e.target.value})} placeholder={t('address_placeholder')} className="w-full bg-zinc-900 border border-zinc-700 p-4 text-white focus:border-[#f97316] outline-none font-mono text-sm resize-none" />
                        </div>
                        <div className="space-y-3 pt-6 border-t border-zinc-800">
                           <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2">{t('analytics_id')}</label>
-                          <input type="text" value={branding.analyticsId} onChange={(e) => setBranding({...branding, analyticsId: e.target.value})} placeholder="np. G-123456789" className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
+                          <input type="text" value={branding.analyticsId} onChange={(e) => setBranding({...branding, analyticsId: e.target.value})} placeholder={t('analytics_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                        </div>
                    </div>
 
@@ -300,7 +300,7 @@ export default function SetupWizard() {
                       <div className="bg-zinc-900 border border-[#f97316]/50 p-6 shadow-inner">
                          <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-6">
                             <div>
-                               <h3 className="text-sm font-black uppercase tracking-widest text-[#f97316] flex items-center gap-2"><Sparkles size={16}/> AI SEO Wtrysk</h3>
+                               <h3 className="text-sm font-black uppercase tracking-widest text-[#f97316] flex items-center gap-2"><Sparkles size={16}/> {t('ai_injection')}</h3>
                                <p className="text-zinc-500 text-xs mt-1">{t('ai_injection_desc')}</p>
                             </div>
                             <label className="flex items-center cursor-pointer">
@@ -320,11 +320,11 @@ export default function SetupWizard() {
                                </div>
                                <div className="space-y-3">
                                   <label className="text-[10px] font-bold text-zinc-400 uppercase">{t('seo_keywords')}</label>
-                                  <input type="text" value={branding.seoKeywords} onChange={(e) => setBranding({...branding, seoKeywords: e.target.value})} placeholder="np. medycyna, dentysta wrocław" className="w-full h-10 bg-black border border-zinc-700 px-3 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
+                                  <input type="text" value={branding.seoKeywords} onChange={(e) => setBranding({...branding, seoKeywords: e.target.value})} placeholder={t('seo_placeholder')} className="w-full h-10 bg-black border border-zinc-700 px-3 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                                </div>
                                <div className="space-y-3">
                                   <label className="text-[10px] font-bold text-zinc-400 uppercase">{t('tone')}</label>
-                                  <textarea rows={2} value={branding.aiContext} onChange={(e) => setBranding({...branding, aiContext: e.target.value})} placeholder="np. Komunikuj się agresywnie i z humorem." className="w-full bg-black border border-zinc-700 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
+                                  <textarea rows={2} value={branding.aiContext} onChange={(e) => setBranding({...branding, aiContext: e.target.value})} placeholder={t('tone_placeholder')} className="w-full bg-black border border-zinc-700 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                                </div>
                             </div>
                          )}
@@ -333,7 +333,7 @@ export default function SetupWizard() {
                </div>
 
                <div className="bg-[#0A0A0A] border border-zinc-800 p-6 shadow-inner mt-8">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-[#f97316] border-b border-zinc-800 pb-4 mb-6"><TerminalSquare size={16} className="inline mr-2"/> Inny Zespół Backendowy (MDK Architektura)</h3>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-[#f97316] border-b border-zinc-800 pb-4 mb-6"><TerminalSquare size={16} className="inline mr-2"/> {t('other_backend')}</h3>
                   
                   <div className="space-y-6">
                      <label className={`flex items-center cursor-pointer group ${!branding.useAI ? 'opacity-40 cursor-not-allowed' : ''}`}>

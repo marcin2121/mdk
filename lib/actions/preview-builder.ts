@@ -15,22 +15,30 @@ export async function generateLivePreview(templateId: string, branding: any) {
             rawCodeStr = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'templates', 'saas-ai.txt'), 'utf-8');
         }
 
+        const isEn = branding.lang === 'en';
         const brandName = branding.companyName || "MDK STARTUP"
         const primaryColor = branding.primaryColor || "#EAB308"
         const heroImage = branding.heroImageUrl || "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070"
         
-        // Użycie dynamicznie wpisanego/wygenerowanego tekstu (Fallback do makieto-lorem jeśli User nic nie wpisał)
-        const aiHeroTitle = branding.heroTitle || `Infrastruktura <br/> <span style="color: ${primaryColor}">W Nowej Epoce.</span>`
-        const aiHeroDesc = branding.heroDesc || `Automatycznie przetworzone przez MDK Live Engine. Zbuduj skalowalne aplikacje już teraz.`
+        const aiHeroTitle = branding.heroTitle || (isEn 
+            ? `Modern <br/> <span style="color: ${primaryColor}">Infrastructure.</span>`
+            : `Infrastruktura <br/> <span style="color: ${primaryColor}">W Nowej Epoce.</span>`)
+            
+        const aiHeroDesc = branding.heroDesc || (isEn 
+            ? `Automatically processed by MDK Live Engine. Build scalable apps right now.`
+            : `Automatycznie przetworzone przez MDK Live Engine. Zbuduj skalowalne aplikacje już teraz.`)
+
+        const ctaText = branding.ctaText || (isEn ? "Sign In" : "Zaloguj");
+        const address = branding.address || (isEn ? "123 Architect St, NYC" : "ul. Przykładowa 1");
 
         let compiledCode = rawCodeStr
            .replace(/{{COMPANY_NAME}}/g, brandName)
            .replace(/{{PRIMARY_COLOR}}/g, primaryColor)
            .replace(/{{HERO_IMAGE}}/g, heroImage)
-           .replace(/{{CTA_TEXT}}/g, branding.ctaText || "Zaloguj")
-           .replace(/{{CONTACT_PHONE}}/g, branding.contactPhone || "+48 000 000 000")
-           .replace(/{{CONTACT_EMAIL}}/g, branding.contactEmail || "kontakt@firma.pl")
-           .replace(/{{ADDRESS}}/g, branding.address || "ul. Przykładowa 1")
+           .replace(/{{CTA_TEXT}}/g, ctaText)
+           .replace(/{{CONTACT_PHONE}}/g, branding.contactPhone || (isEn ? "+1 (123) 000-0000" : "+48 000 000 000"))
+           .replace(/{{CONTACT_EMAIL}}/g, branding.contactEmail || "contact@company.com")
+           .replace(/{{ADDRESS}}/g, address)
            .replace(/{{HERO_TITLE}}/g, aiHeroTitle)
            .replace(/{{HERO_DESC}}/g, aiHeroDesc);
 
@@ -42,12 +50,12 @@ export async function generateLivePreview(templateId: string, branding: any) {
              <div className="font-black text-xl tracking-tighter uppercase flex items-center gap-3">
                 <span className="text-white">${brandName}</span>
              </div>
-             <nav className="flex items-center gap-6 text-sm font-bold tracking-widest uppercase">
-                <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Start</span>
-                <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Usługi</span>
-                <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Oferta Premium</span>
-                <button className="text-black px-6 py-2 rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '${primaryColor}' }}>${branding.ctaText || 'Akcja'}</button>
-             </nav>
+              <nav className="flex items-center gap-6 text-sm font-bold tracking-widest uppercase">
+                 <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">${isEn ? 'Home' : 'Start'}</span>
+                 <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">${isEn ? 'Services' : 'Usługi'}</span>
+                 <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">${isEn ? 'Premium' : 'Oferta Premium'}</span>
+                 <button className="text-black px-6 py-2 rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '${primaryColor}' }}>${branding.ctaText || (isEn ? 'Action' : 'Akcja')}</button>
+              </nav>
           </header>
             `;
         } else if (branding.navbarStyle === 'minimal') {
@@ -72,13 +80,13 @@ export async function generateLivePreview(templateId: string, branding: any) {
                    <h4 className="text-white font-black text-2xl uppercase tracking-tighter mb-4">${brandName}</h4>
                    <p className="text-zinc-500 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">${branding.address || 'Adres'}</p>
                 </div>
-                <div className="flex flex-col gap-3 text-sm font-bold uppercase tracking-widest text-zinc-400">
-                   <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>Start</span>
-                   <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>Oferta</span>
-                   <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>Kosztorys</span>
-                </div>
-                <div>
-                   <p className="font-mono text-zinc-500 mb-2">Szybki Kontakt</p>
+                 <div className="flex flex-col gap-3 text-sm font-bold uppercase tracking-widest text-zinc-400">
+                    <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>${isEn ? 'Home' : 'Start'}</span>
+                    <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>${isEn ? 'Offer' : 'Oferta'}</span>
+                    <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors" style={{ ':hover': { color: '${primaryColor}' } } as any}>${isEn ? 'Estimates' : 'Kosztorys'}</span>
+                 </div>
+                 <div>
+                    <p className="font-mono text-zinc-500 mb-2">${isEn ? 'Quick Contact' : 'Szybki Kontakt'}</p>
                    <p className="text-xl font-black text-white mb-1">${branding.contactPhone || 'TEL'}</p>
                    <p className="text-[var(--mdk-primary)]" style={{ color: '${primaryColor}' }}>${branding.contactEmail || 'MAIL'}</p>
                 </div>
@@ -91,7 +99,7 @@ export async function generateLivePreview(templateId: string, branding: any) {
         } else if (branding.footerStyle === 'minimal') {
             newFooter = `
           <footer className="border-t border-zinc-900 mt-32 py-8 text-center text-zinc-700 font-mono text-xs uppercase tracking-widest">
-             © 2026 ${brandName}. Wszelkie prawa zastrzeżone.
+             © 2026 ${brandName}. ${isEn ? 'All rights reserved.' : 'Wszelkie prawa zastrzeżone.'}
           </footer>
             `;
         }
