@@ -26,20 +26,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // META CHECK: Funkcja Node.js badająca strukturę plików katalogu roboczego (działa w SSR / Server Component)
-  // Szuka pliku .molenda-setup. Jeśli go nie ma, wstrzymuje render aplikacji i odpala Kreator!
-  const isSetupComplete = fs.existsSync(path.join(process.cwd(), '.molenda-setup'));
-
-  if (!isSetupComplete) {
-    return (
-      <html lang="pl" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} >
-           <SetupWizard />
-        </body>
-      </html>
-    );
-  }
-
   return (
     <html lang="pl" suppressHydrationWarning>
       <body

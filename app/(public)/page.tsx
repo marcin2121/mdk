@@ -1,8 +1,14 @@
 
 import Link from "next/link";
 import { MapPin, Phone, Clock, Star } from "lucide-react";
+import fs from "fs";
+import path from "path";
+import SetupWizard from "../../components/wizard/setup-wizard";
 
 export default function ClientWebsite() {
+  const isSetupComplete = fs.existsSync(path.join(process.cwd(), '.molenda-setup'));
+  if (!isSetupComplete) return <SetupWizard />;
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans selection:bg-[#a80011] selection:text-white">
       <header className="px-6 lg:px-12 h-24 flex items-center justify-between bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">

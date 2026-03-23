@@ -7,6 +7,18 @@ import { promisify } from 'util'
 
 const execAsync = promisify(exec)
 
+function parseMdkMetadata(codeStr: string): { dependencies: string[] } {
+    const match = codeStr.match(/\/\* MDK-METADATA\s*([\s\S]*?)\s*\*\//);
+    if (match && match[1]) {
+        try {
+            return JSON.parse(match[1]);
+        } catch (e) {
+            console.error("[MDK metadata] Błąd parsowania JSON:", e);
+        }
+    }
+    return { dependencies: [] };
+}
+
 // Powłoka wykonawcza rozszerzona o payload brandingowy (nazwa, obraz, wariant wizualny)
 export async function runSetupAction(packages: string[], config: any) {
   try {
@@ -262,96 +274,141 @@ export async function runSetupAction(packages: string[], config: any) {
        .replace(/{{HERO_TITLE}}/g, aiHeroTitle)
        .replace(/{{HERO_DESC}}/g, aiHeroDesc);
 
+    
+
+    // 4.1 INIEKCJA HEADER / FOOTER W ZALEŻNOŚCI OD WYBRANEGO STYLU 
+    // Zastępuje domyślne tagi <header> i <footer> w pobranym szablonie
+    let newHeader = "";
+    if (config.branding.navbarStyle === 'glass') {
+        newHeader = `
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl bg-zinc-900/40 backdrop-blur-xl border border-zinc-700/50 rounded-full flex items-center justify-between px-8 h-16 z-50 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+         <div className="font-black text-xl tracking-tighter uppercase flex items-center gap-3">
+            <span className="text-white">{{COMPANY_NAME}}</span>
+         </div>
+         <nav className="flex items-center gap-6 text-sm font-bold tracking-widest uppercase">
+            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Usługi</span>
+            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Cennik</span>
+            <button className="text-black px-6 py-2 rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '{{PRIMARY_COLOR}}' }}>{{CTA_TEXT}}</button>
+         </nav>
+      </header>
+        `;
+    } else if (config.branding.navbarStyle === 'minimal') {
+        newHeader = `
+      <header className="border-b border-zinc-800 bg-[#0A0A0A] px-6 h-16 flex items-center justify-between sticky top-0 z-50">
+         <div className="font-bold text-lg tracking-widest uppercase text-white">{{COMPANY_NAME}}</div>
+         <button className="text-[var(--mdk-primary)] font-mono text-sm uppercase tracking-widest hover:underline">{{CTA_TEXT}}</button>
+      </header>
+        `;
+    } else if (config.branding.navbarStyle === 'hidden') {
+        newHeader = ``;
+    }
+
+    if (newHeader !== "") {
+        compiledCode = compiledCode.replace(/<header[\s\S]*?<\/header>/, newHeader.trim());
+    }
+
+    let newFooter = "";
+    if (config.branding.footerStyle === 'glass') {
+        newFooter = `
+      <footer className="mt-20 my-6 mx-auto w-[95%] max-w-7xl bg-zinc-900/30 backdrop-blur-xl border border-zinc-800/60 rounded-[3rem] p-12 shadow-2xl overflow-hidden relative">
+         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-[var(--mdk-primary)] opacity-50 blur-xl"></div>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10 text-center md:text-left">
+            <div>
+               <h4 className="text-white font-black text-2xl uppercase tracking-tighter mb-4">{{COMPANY_NAME}}</h4>
+               <p className="text-zinc-500 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">{{ADDRESS}}</p>
+            </div>
+            <div className="flex flex-col gap-3 text-sm font-bold uppercase tracking-widest text-zinc-400">
+               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Start</span>
+               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Oferta</span>
+               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Kosztorys</span>
+            </div>
+            <div>
+               <p className="font-mono text-zinc-500 mb-2">Szybki Kontakt</p>
+               <p className="text-xl font-black text-white mb-1">{{CONTACT_PHONE}}</p>
+               <p className="text-[var(--mdk-primary)]">{{CONTACT_EMAIL}}</p>
+            </div>
+         </div>
+         <div className="border-t border-zinc-800/50 mt-12 pt-6 text-center text-zinc-700 font-mono text-xs">
+            © 2026 {{COMPANY_NAME}}. Architektura MDK.
+         </div>
+      </footer>
+        `;
+    } else if (config.branding.footerStyle === 'minimal') {
+        newFooter = `
+      <footer className="border-t border-zinc-900 mt-32 py-8 text-center text-zinc-700 font-mono text-xs uppercase tracking-widest">
+         © 2026 {{COMPANY_NAME}}. Wszelkie prawa zastrzeżone.
+      </footer>
+        `;
+    }
+
+    if (newFooter !== "") {
+        compiledCode = compiledCode.replace(/<footer[\s\S]*?<\/footer>/, newFooter.trim());
+    }
+
     // 4.5. MODULES INJECTION: Chatbot & Calculator (UI Components Generator)
+
     let appendedComponents = "";
     let appendedImports = "";
     
-    // GŁÓWNY ADRES NOWEGO REPOZYTORIUM Z MODUŁAMI
     const MDK_REGISTRY_URL = 'https://raw.githubusercontent.com/marcin2121/mdk-registry/main/components';
 
-    if (config.branding.modules?.chatbot) {
-       console.log(`[MDK SYSTEM] Pobieranie Modułu Chatbota ze zdalnego repozytorium mdk-registry...`);
-       const componentsDir = path.join(process.cwd(), 'components', 'mdk');
-       if (!fs.existsSync(componentsDir)) fs.mkdirSync(componentsDir, { recursive: true });
-       
-       let chatbotCode = "";
-       try {
-           const res = await fetch(`${MDK_REGISTRY_URL}/chatbot.txt`);
-           if (res.ok) {
-               chatbotCode = await res.text();
-           } else {
-               throw new Error(`API Github odrzuciło żądanie z kodem HTTP: ${res.status}`);
-           }
-       } catch (err: any) {
-           console.log("[MDK SYSTEM] Moduł z GitHub niedostępny, używam wersji z lokalnego repozytorium twórcy (../mdk-registry/components)...");
-           try {
-               chatbotCode = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', 'chatbot.txt'), 'utf-8');
-           } catch {
-               console.error("[MDK SYSTEM] Fatal Error - Moduł w pełni niedostępny lokalnie i zdalnie:", err.message);
-               chatbotCode = `export default function ChatbotCrash() { return <div className="fixed bottom-4 right-4 bg-red-900 border border-red-500 text-red-200 text-xs p-4 rounded-xl shadow-2xl z-50"><b>MDK Registry Error</b>: Plik chatbot.txt niedostępny online na koncie twórcy ani w repozytorium lokalnym.</div> }`;
-           }
-       }
-       
-       // Szybkie wstrzyknięcie Kontekstu (Promptu dewelopera) do komponentu klienta
-       chatbotCode = chatbotCode.replace(/{{CHATBOT_CONTEXT}}/g, config.branding.modules.chatbotContext || "Pomóż klientowi i odpowiadaj krótko.");
-       
-       fs.writeFileSync(path.join(componentsDir, 'Chatbot.tsx'), chatbotCode);
-       appendedImports += `import Chatbot from '@/components/mdk/Chatbot';\n`;
-       appendedComponents += `<Chatbot />\n`;
-    }
+    if (config.branding.modules) {
+        const MODULE_FILES_MAP: Record<string, string> = {
+            chatbot: 'chatbot.txt',
+            calculator: 'calculator.txt',
+            testimonials: 'testimonials.txt',
+            pricing: 'pricing-cards.txt',
+            faq: 'accordion-faq.txt'
+        };
 
-    if (config.branding.modules?.calculator) {
-       console.log(`[MDK SYSTEM] Pobieranie Modułu Kalkulatora ze zdalnego repozytorium mdk-registry...`);
-       const componentsDir = path.join(process.cwd(), 'components', 'mdk');
-       if (!fs.existsSync(componentsDir)) fs.mkdirSync(componentsDir, { recursive: true });
-       
-       let calcCode = "";
-       try {
-           const res = await fetch(`${MDK_REGISTRY_URL}/calculator.txt`);
-           if (res.ok) {
-               calcCode = await res.text();
-           } else {
-               throw new Error(`API Github odrzuciło żądanie z kodem HTTP: ${res.status}`);
-           }
-       } catch (err: any) {
-           console.log("[MDK SYSTEM] Moduł kalkulatora z GitHub niedostępny, używam wersji z lokalnego repozytorium twórcy (../mdk-registry/components)...");
-           try {
-               calcCode = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', 'calculator.txt'), 'utf-8');
-           } catch {
-               console.error("[MDK SYSTEM] Fatal Error - Kalkulator niedostępny lokalnie i zdalnie:", err.message);
-               calcCode = `export default function CalculatorCrash() { return <div className="p-8 border-2 border-red-500/50 bg-red-900/20 text-red-500 font-bold max-w-4xl mx-auto rounded mt-20">MDK Registry Error: Moduł calculator.txt nie istnieje na bazowym GitHubie ani w repozytorium lokalnym.</div> }`;
-           }
-       }
-       
-       fs.writeFileSync(path.join(componentsDir, 'Calculator.tsx'), calcCode);
-       appendedImports += `import Calculator from '@/components/mdk/Calculator';\n`;
-       appendedComponents += `\n            {/* Wstrzykiwany Modul Kalkulatora */}\n            <Calculator />\n`;
-    }
+        const activeModules = Object.keys(config.branding.modules).filter(k => 
+            config.branding.modules[k] === true && MODULE_FILES_MAP[k]
+        );
 
-    if (config.branding.modules?.testimonials) {
-       console.log(`[MDK SYSTEM] Pobieranie Modułu Testimonials ze zdalnego repozytorium mdk-registry...`);
-       const componentsDir = path.join(process.cwd(), 'components', 'mdk');
-       if (!fs.existsSync(componentsDir)) fs.mkdirSync(componentsDir, { recursive: true });
-       
-       let testCode = "";
-       try {
-           const res = await fetch(`${MDK_REGISTRY_URL}/testimonials.txt`);
-           if (res.ok) {
-               testCode = await res.text();
-           } else {
-               throw new Error(`API Github odrzuciło: ${res.status}`);
-           }
-       } catch (err: any) {
-           try {
-               testCode = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', 'testimonials.txt'), 'utf-8');
-           } catch {
-               testCode = `export default function TestiCrash() { return <div className="border border-red-500 p-4">Brak komponentu Referencji (Testimonials).</div> }`;
-           }
-       }
-       
-       fs.writeFileSync(path.join(componentsDir, 'Testimonials.tsx'), testCode);
-       appendedImports += `import Testimonials from '@/components/mdk/Testimonials';\n`;
-       appendedComponents += `\n            {/* Wstrzykiwany Suwak Referencji */}\n            <Testimonials />\n`;
+        for (const modId of activeModules) {
+            const fileName = MODULE_FILES_MAP[modId];
+            const className = modId.charAt(0).toUpperCase() + modId.slice(1); 
+            
+            console.log(`[MDK SYSTEM] Pobieranie Modułu ${className} ze zdalnego repozytorium...`);
+            const componentsDir = path.join(process.cwd(), 'components', 'mdk');
+            if (!fs.existsSync(componentsDir)) fs.mkdirSync(componentsDir, { recursive: true });
+
+            let code = "";
+            try {
+                const res = await fetch(`${MDK_REGISTRY_URL}/${fileName}`);
+                if (res.ok) {
+                    code = await res.text();
+                } else {
+                    throw new Error(`Fetch failed`);
+                }
+            } catch (err) {
+                try {
+                    code = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', fileName), 'utf-8');
+                } catch {
+                    code = `export default function ${className}Crash() { return <div className="p-4 border border-red-500">MDK Registry Error: Moduł ${fileName} niedostępny.</div> }`;
+                }
+            }
+
+            if (modId === 'chatbot') {
+                code = code.replace(/{{CHATBOT_CONTEXT}}/g, config.branding.modules.chatbotContext || "Pomóż klientowi i odpowiadaj krótko.");
+            }
+
+            const meta = parseMdkMetadata(code);
+            if (meta.dependencies?.length > 0) {
+                console.log(`[MDK] Autoinstalacja zależności dla ${className}: ${meta.dependencies.join(' ')}`);
+                try { await execAsync(`npm install ${meta.dependencies.join(' ')}`); } catch (e) {}
+            }
+            code = code.replace(/\/\* MDK-METADATA[\s\S]*?\*\//, '').trim();
+
+            fs.writeFileSync(path.join(componentsDir, `${className}.tsx`), code);
+            appendedImports += `import ${className} from '@/components/mdk/${className}';\n`;
+            
+            if (modId === 'chatbot') {
+                appendedComponents += `<${className} />\n`;
+            } else {
+                appendedComponents += `\n            {/* Wstrzykiwany Moduł ${className} */}\n            <${className} />\n`;
+            }
+        }
     }
 
     // 4.6. WSTRZYKIWANIE TYPOGRAFII I ANALITYKI DO layout.tsx
