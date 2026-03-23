@@ -1,15 +1,19 @@
 // @ts-nocheck
-import Chatbot from '@/components/mdk/Chatbot';
-import Calculator from '@/components/mdk/Calculator';
-import Testimonials from '@/components/mdk/Testimonials';
-import Pricing from '@/components/mdk/Pricing';
-import Faq from '@/components/mdk/Faq';
 import Link from "next/link";
-import { BarChart3, Users, Zap, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Code2, MonitorPlay, Layers, ArrowRight } from "lucide-react";
 
-export default function SaaSPage() {
+export default function PortfolioPage() {
   return (
-    <div style={{ fontFamily: 'Geist, sans-serif' }} className="min-h-screen bg-[#050505] text-zinc-200 font-sans selection:bg-[#f97316] selection:text-black">
+    <>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" />
+      <style>{`* { font-family: "Playfair Display, serif" !important; }`}</style>
+
+    <div className="min-h-screen bg-[#000000] text-white font-sans overflow-hidden selection:bg-[#f97316] selection:text-black">
+      <div className="fixed inset-0 z-0 pointer-events-none">
+         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[150px] opacity-20 mix-blend-screen" style={{ backgroundColor: '#f97316' }} />
+         <div className="absolute bottom-1/4 left-1/4 w-[800px] h-[800px] rounded-full blur-[200px] opacity-10 mix-blend-screen animate-pulse" style={{ backgroundColor: '#f97316' }} />
+      </div>
+
       <header className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl bg-zinc-900/40 backdrop-blur-xl border border-zinc-700/50 rounded-full flex items-center justify-between px-8 h-16 z-50 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
              <div className="font-black text-xl tracking-tighter uppercase flex items-center gap-3">
                 <span className="text-white">MDK STARTUP</span>
@@ -22,73 +26,45 @@ export default function SaaSPage() {
               </nav>
           </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-20">
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-[75vh] text-center px-4">
+         <h1 className="text-[14vw] sm:text-[10vw] font-black leading-[0.85] tracking-tighter uppercase mix-blend-difference drop-shadow-2xl">
+            We Create <br/> 
+            <i className="font-serif italic font-light block mt-4" style={{ color: '#f97316' }}>Digital Modules.</i>
+         </h1>
          
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32">
-            <div>
-               <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-900 border border-zinc-800 text-xs font-bold uppercase tracking-widest rounded-full mb-6 text-zinc-400">
-                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#f97316' }} /> System Gotowy
-               </div>
-               <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-white leading-none" dangerouslySetInnerHTML={{ __html: `Modern <br/> <span style="color: #f97316">Infrastructure.</span>` }} />
-               <p className="text-xl text-zinc-400 mb-10 max-w-xl font-medium leading-relaxed border-l-4 pl-6" style={{ borderColor: '#f97316' }}>
-                  Automatically processed by MDK Live Engine. Build scalable apps right now.
-               </p>
-               
-               <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="text-black font-black uppercase tracking-widest px-8 py-5 transition-transform hover:-translate-y-1 flex items-center justify-center gap-3" style={{ backgroundColor: '#f97316' }}>
-                     Sign In <ArrowRight size={20} />
-                  </button>
-                  <button className="text-white bg-zinc-900 border border-zinc-800 font-bold uppercase tracking-widest px-8 py-5 transition-colors hover:bg-zinc-800">
-                     Dokumentacja
-                  </button>
-               </div>
-            </div>
+         <p className="mt-12 text-xl md:text-3xl text-zinc-400 max-w-4xl font-light leading-relaxed">
+            Exclusive MDK developer studio. We achieve rendering performance on the edge of today's browsers' capabilities.
+         </p>
 
-            <div className="relative">
-               <div className="absolute inset-0 blur-[100px] opacity-20 pointer-events-none" style={{ backgroundColor: '#f97316' }} />
-               {`https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070` ? <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070" alt="Dashboard" className="w-full aspect-square object-cover border border-zinc-800 rounded-3xl relative z-10 shadow-2xl" /> : <div className="w-full aspect-square border border-zinc-900 border-dashed rounded-3xl relative z-10 flex items-center justify-center text-zinc-700 font-mono text-sm">(Brak Obrazu MDK)</div>}
+         <button className="mt-16 text-black font-black uppercase tracking-widest px-10 py-6 transition-transform hover:scale-105 flex items-center gap-4 group" style={{ backgroundColor: '#f97316' }}>
+            Sign In
+            <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+         </button>
+
+         <div className="mt-32 grid grid-cols-1 sm:grid-cols-3 gap-0 max-w-7xl mx-auto w-full text-left border-y border-zinc-900 border-x-0">
+            <div className="p-10 hover:bg-zinc-950 transition-colors group md:border-r border-zinc-900 border-b md:border-b-0">
+               <MonitorPlay size={40} className="mb-6 text-zinc-600 transition-colors" style={{ color: '#f97316' }} />
+               <h3 className="text-xl font-bold uppercase mb-4 tracking-widest text-white">Generative UI</h3>
+               <p className="text-sm text-zinc-500 font-medium leading-relaxed">Interactive in-browser animations created live using the raw power of fragment mathematics.</p>
+            </div>
+            <div className="p-10 hover:bg-zinc-950 transition-colors group md:border-r border-zinc-900 border-b md:border-b-0">
+               <Code2 size={40} className="mb-6 text-zinc-600 transition-colors" style={{ color: '#f97316' }} />
+               <h3 className="text-xl font-bold uppercase mb-4 tracking-widest text-white">Web Architecture</h3>
+               <p className="text-sm text-zinc-500 font-medium leading-relaxed">System pushed to the Edge server. Lowest possible Time-To-First-Byte and full scale of SEO deployments.</p>
+            </div>
+            <div className="p-10 hover:bg-zinc-950 transition-colors group">
+               <Layers size={40} className="mb-6 text-zinc-600 transition-colors" style={{ color: '#f97316' }}/>
+               <h3 className="text-xl font-bold uppercase mb-4 tracking-widest text-white">Typography & Brand</h3>
+               <p className="text-sm text-zinc-500 font-medium leading-relaxed">We exclude standard components. Entire projects are driven by unconventional visionary and editorial approach. Awwwards awards.</p>
             </div>
          </div>
-         
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32">
-            <div className="p-8 border border-zinc-800 bg-[#0A0A0A] hover:-translate-y-2 transition-transform group">
-               <BarChart3 size={40} style={{ color: '#f97316' }} className="mb-6 opacity-80 group-hover:opacity-100" strokeWidth={1.5} />
-               <h3 className="text-xl font-bold uppercase tracking-tight text-white mb-2">Statystyki w Czasie Rzeczywistym</h3>
-               <p className="text-zinc-500 text-sm font-medium">Błyskawiczna integracja z bazą danych PostgreSQL. Zero opóźnień.</p>
-            </div>
-            <div className="p-8 border border-zinc-800 bg-[#0A0A0A] hover:-translate-y-2 transition-transform group">
-               <Users size={40} style={{ color: '#f97316' }} className="mb-6 opacity-80 group-hover:opacity-100" strokeWidth={1.5} />
-               <h3 className="text-xl font-bold uppercase tracking-tight text-white mb-2">Role & Uprawnienia</h3>
-               <p className="text-zinc-500 text-sm font-medium">Bezwzględne bezpieczeństwo rzędów dzięki natywnym politykom RLS.</p>
-            </div>
-            <div className="p-8 border border-zinc-800 bg-[#0A0A0A] hover:-translate-y-2 transition-transform group">
-               <Zap size={40} style={{ color: '#f97316' }} className="mb-6 opacity-80 group-hover:opacity-100" strokeWidth={1.5} />
-               <h3 className="text-xl font-bold uppercase tracking-tight text-white mb-2">Prędkość Edge</h3>
-               <p className="text-zinc-500 text-sm font-medium">Aplikacje renderowane bezpośrednio na węzłach Vercel dla 100/100 LH.</p>
-            </div>
-         </div>
-      
-            {/* Live Moduł MDK: Chatbot */}
-            <Chatbot />
+      </main>
 
-            {/* Live Moduł MDK: Calculator */}
-            <Calculator />
-
-            {/* Live Moduł MDK: Testimonials */}
-            <Testimonials />
-
-            {/* Live Moduł MDK: Pricing */}
-            <Pricing />
-
-            {/* Live Moduł MDK: Faq */}
-            <Faq />
-
-        </main>
-
-      <footer className="border-t border-zinc-900 mt-20 py-10 text-center text-zinc-600 font-mono text-sm">
-         <p>contact@company.com // +1 (123) 000-0000</p>
-         <p className="mt-2 text-zinc-700">© 2026 MDK STARTUP. Wygenerowano przez MDK.</p>
+      <footer className="w-full text-center py-10 mt-20 text-xs font-mono tracking-widest uppercase text-zinc-600">
+         123 Architect St, NYC // +1 (123) 000-0000
       </footer>
     </div>
+  
+    </>
   );
 }

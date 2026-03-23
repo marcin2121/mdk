@@ -6,7 +6,20 @@ export async function generateCopywriting(branding: any) {
     }
 
     try {
-        const prompt = `
+        const isEn = branding.lang === 'en';
+        
+        const prompt = isEn ? `
+You are an elite copywriter for an Awwwards-winning interactive agency.
+Here is the company context:
+Name: ${branding.companyName || 'Startup'}
+Niche/Keywords: ${branding.seoKeywords || 'Technology, Modern'}
+Tone of Voice: ${branding.aiContext || 'Professional, direct'}
+
+Generate a heroTitle (Hero Heading), a heroDesc (Sub-headline), and a ctaText (Button label) for the main landing page section.
+Important! Do NOT add Markdown tags like \`\`\`json. Just output the raw object. Return data in clean, minimal JSON structure.
+Example structure: { "heroTitle": "Aggressive Headline With Class", "heroDesc": "Trust industry experts, not amateurs.", "ctaText": "Get Started" }
+Use up to 4-5 words max in Title, and up to 15 words in Desc.
+` : `
 Jesteś elitarnym copywriterem agencji interaktywnej nagradzanej Awwwards.
 Oto kontekst firmy:
 Nazwa: ${branding.companyName || 'Startup'}

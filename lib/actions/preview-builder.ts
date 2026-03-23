@@ -7,15 +7,16 @@ export async function generateLivePreview(templateId: string, branding: any) {
     try {
         console.log(`[Molenda CLI] Wypalanie Live Preview w locie dla: ${templateId}...`)
         
+        const isEn = branding.lang === 'en';
         let rawCodeStr = "";
         try {
-            const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', `${templateId}.txt`);
+            const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', isEn ? `${templateId}-en.txt` : `${templateId}.txt`);
             rawCodeStr = fs.readFileSync(registryPath, 'utf-8');
         } catch(e) {
-            rawCodeStr = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'templates', 'saas-ai.txt'), 'utf-8');
+            const fallbackPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', isEn ? 'saas-ai-en.txt' : 'saas-ai.txt');
+            rawCodeStr = fs.readFileSync(fallbackPath, 'utf-8');
         }
 
-        const isEn = branding.lang === 'en';
         const brandName = branding.companyName || "MDK STARTUP"
         const primaryColor = branding.primaryColor || "#EAB308"
         const heroImage = branding.heroImageUrl || "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070"
@@ -68,7 +69,11 @@ export async function generateLivePreview(templateId: string, branding: any) {
         } else if (branding.navbarStyle === 'hidden') {
             newHeader = ``;
         }
-        if (newHeader !== "") compiledCode = compiledCode.replace(/<header[\s\S]*?<\/header>/, newHeader.trim());
+        if (newHeader !== "") {
+            const hasHeader = compiledCode.includes('<header');
+            const navRegex = hasHeader ? /<header[\s\S]*?<\/header>/ : /<nav[\s\S]*?<\/nav>/;
+            compiledCode = compiledCode.replace(navRegex, newHeader.trim());
+        }
 
         let newFooter = "";
         if (branding.footerStyle === 'glass') {
@@ -113,7 +118,20 @@ export async function generateLivePreview(templateId: string, branding: any) {
 
         // Handle font family injection inline for preview
         const fontStr = branding.typography === 'inter' ? 'Inter, sans-serif' : branding.typography === 'playfair' ? 'Playfair Display, serif' : branding.typography === 'outfit' ? 'Outfit, sans-serif' : 'Geist, sans-serif';
-        compiledCode = compiledCode.replace(/<div className="min-h-screen bg-\[#050505\]/g, `<div style={{ fontFamily: '${fontStr}' }} className="min-h-screen bg-[#050505]`);
+        
+        let fontCdn = "https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap";
+        if (branding.typography === 'playfair') fontCdn = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap";
+        if (branding.typography === 'outfit') fontCdn = "https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap";
+
+        // Wstrzyknij link CDN style i * { font-family }
+        if (compiledCode.includes('return (\n')) {
+            compiledCode = compiledCode.replace('return (\n', `return (\n    <>\n      <link rel="stylesheet" href="${fontCdn}" />\n      <style>{\`* { font-family: "${fontStr}" !important; }\`}</style>\n`);
+            compiledCode = compiledCode.replace(');\n}', '\n    </>\n  );\n}');
+        } else {
+            compiledCode = compiledCode.replace('return (', `return (\n    <>\n      <link rel="stylesheet" href="${fontCdn}" />\n      <style>{\`* { font-family: "${fontStr}" !important; }\`}</style>\n`);
+            compiledCode = compiledCode.replace(');', '\n    </>\n  );');
+        }
+
 
         // INIEKCJA ZAAWANSOWANYCH MODUŁÓW (TESTIMONIALS/PRICING/FAQ ITD) PRZEZ POBRANY MDK-REGISTRY
         let appendedImports = "";

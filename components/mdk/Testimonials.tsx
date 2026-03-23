@@ -1,4 +1,5 @@
 "use client"
+const isEn = typeof window !== "undefined" && window.location.href.includes("/en");
 import { Star, Quote } from "lucide-react"
 
 export default function Testimonials() {

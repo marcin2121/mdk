@@ -11,55 +11,55 @@ import { useEffect } from "react"
 const PROJECT_TYPES = [
   { id: 'saas', name: 'saas_name', desc: 'saas_desc', icon: Cloud },
   { id: 'client', name: 'client_name', desc: 'client_desc', icon: Store },
-  { id: 'portfolio', name: 'portfolio_name', desc: "Kreatywne i silnie animowane wizje wizytówkowe z wariantami Premium 3D.", icon: Code2 }
+  { id: 'portfolio', name: 'portfolio_name', desc: "portfolio_desc", icon: Code2 }
 ]
 
 const TEMPLATES: Record<string, any[]> = {
   saas: [
-    { id: 'saas-ai', name: 'AI SaaS Dashboard', desc: 'Ciemny panel. Tabele konwertujące dla analityki oraz logowanie CMS SSR.', packages: ['lucide-react', 'clsx'] }
+    { id: 'saas-ai', name: 'tmpl_saas_ai_name', desc: 'tmpl_saas_ai_desc', packages: ['lucide-react', 'clsx'] }
   ],
   client: [
-    { id: 'client-beauty', name: 'Klasyczna Oferta B2C', desc: 'Trzysekcyjny klasyk: O nas, Pełna sekcja adresowo-kontaktowa oraz Cennik.', packages: ['lucide-react'] }
+    { id: 'client-beauty', name: 'tmpl_client_beauty_name', desc: 'tmpl_client_beauty_desc', packages: ['lucide-react'] }
   ],
   portfolio: [
-    { id: 'portfolio-minimal', name: 'Minimal & Typo', desc: 'Zatopienie układu w bezwględnej ciemności napędzanej olbrzymią typografią i wireframami.', packages: ['lucide-react'] }
+    { id: 'portfolio-minimal', name: 'tmpl_portfolio_minimal_name', desc: 'tmpl_portfolio_minimal_desc', packages: ['lucide-react'] }
   ]
 }
 
 const OPTIONAL_PACKAGES = [
-  { id: 'prettier', name: 'Prettier + Tailwind', desc: 'Automatyczne formatowanie kodu i sortowanie klas.', category: 'dev', packages: ['prettier', 'prettier-plugin-tailwindcss'], isDev: true, repo: 'https://prettier.io' },
-  { id: 'docker', name: 'Docker (Dockerfile/Compose)', desc: 'Generuje konfiguracje do konteneryzacji.', category: 'dev', packages: [], isDev: false, repo: 'https://docker.com' },
-  { id: 'husky', name: 'Husky Git Hooks', desc: 'Weryfikacja kodu przed commitem.', category: 'dev', packages: ['husky'], isDev: true, repo: 'https://typicode.github.io/husky' },
+  { id: 'prettier', name: 'Prettier + Tailwind', desc: 'prettier_desc', category: 'dev', packages: ['prettier', 'prettier-plugin-tailwindcss'], isDev: true, repo: 'https://prettier.io' },
+  { id: 'docker', name: 'Docker (Dockerfile/Compose)', desc: 'docker_desc', category: 'dev', packages: [], isDev: false, repo: 'https://docker.com' },
+  { id: 'husky', name: 'Husky Git Hooks', desc: 'husky_desc', category: 'dev', packages: ['husky'], isDev: true, repo: 'https://typicode.github.io/husky' },
   
-  { id: 'prisma', name: 'Prisma ORM', desc: 'Stabilny, dojrzały typowany ORM SQL.', category: 'db', packages: ['prisma', '@prisma/client'], isDev: false, repo: 'https://prisma.io' },
-  { id: 'drizzle', name: 'Drizzle ORM', desc: 'Lekki i hiper-szybki SQL-builder.', category: 'db', packages: ['drizzle-orm', 'drizzle-kit'], isDev: false, repo: 'https://orm.drizzle.team' },
+  { id: 'prisma', name: 'Prisma ORM', desc: 'prisma_desc', category: 'db', packages: ['prisma', '@prisma/client'], isDev: false, repo: 'https://prisma.io' },
+  { id: 'drizzle', name: 'Drizzle ORM', desc: 'drizzle_desc', category: 'db', packages: ['drizzle-orm', 'drizzle-kit'], isDev: false, repo: 'https://orm.drizzle.team' },
   
-  { id: 'zustand', name: 'Zustand State', desc: 'Prostota stanu bez reduxa.', category: 'state', packages: ['zustand'], isDev: false, repo: 'https://zustand-demo.pmnd.rs' },
-  { id: 'query', name: 'TanStack React Query', desc: 'Mądry cache asynchronicznych danych.', category: 'state', packages: ['@tanstack/react-query'], isDev: false, repo: 'https://tanstack.com/query' },
-  { id: 'axios', name: 'Axios Client', desc: 'Rozszerzony klient fetch API.', category: 'state', packages: ['axios'], isDev: false, repo: 'https://axios-http.com' },
+  { id: 'zustand', name: 'Zustand State', desc: 'zustand_desc', category: 'state', packages: ['zustand'], isDev: false, repo: 'https://zustand-demo.pmnd.rs' },
+  { id: 'query', name: 'TanStack React Query', desc: 'query_desc', category: 'state', packages: ['@tanstack/react-query'], isDev: false, repo: 'https://tanstack.com/query' },
+  { id: 'axios', name: 'Axios Client', desc: 'axios_desc', category: 'state', packages: ['axios'], isDev: false, repo: 'https://axios-http.com' },
 
-  { id: 'clerk', name: 'Clerk Auth', desc: 'Wydajna autoryzacja Cloud.', category: 'auth', packages: ['@clerk/nextjs'], isDev: false, repo: 'https://clerk.com' },
-  { id: 'nextauth', name: 'NextAuth.js', desc: 'Lokalna, wolna tożsamość.', category: 'auth', packages: ['next-auth'], isDev: false, repo: 'https://next-auth.js.org' },
+  { id: 'clerk', name: 'Clerk Auth', desc: 'clerk_desc', category: 'auth', packages: ['@clerk/nextjs'], isDev: false, repo: 'https://clerk.com' },
+  { id: 'nextauth', name: 'NextAuth.js', desc: 'nextauth_desc', category: 'auth', packages: ['next-auth'], isDev: false, repo: 'https://next-auth.js.org' },
 
-  { id: 'framer', name: 'Framer Motion', desc: 'Płynne animacje React.', category: 'ui', packages: ['framer-motion'], isDev: false, repo: 'https://framer.com/motion' },
-  { id: 'gsap', name: 'GSAP Scroller', desc: 'Ciężkie, płynne animacje kinowe.', category: 'ui', packages: ['gsap'], isDev: false, repo: 'https://gsap.com' },
-  { id: 'reacticons', name: 'React Icons', desc: 'Wszystkie ikony w jednym miejscu.', category: 'ui', packages: ['react-icons'], isDev: false, repo: 'https://react-icons.github.io/react-icons/' },
+  { id: 'framer', name: 'Framer Motion', desc: 'framer_desc', category: 'ui', packages: ['framer-motion'], isDev: false, repo: 'https://framer.com/motion' },
+  { id: 'gsap', name: 'GSAP Scroller', desc: 'gsap_desc', category: 'ui', packages: ['gsap'], isDev: false, repo: 'https://gsap.com' },
+  { id: 'reacticons', name: 'React Icons', desc: 'reacticons_desc', category: 'ui', packages: ['react-icons'], isDev: false, repo: 'https://react-icons.github.io/react-icons/' },
 
-  { id: 'stripe', name: 'Stripe Payments', desc: 'Płatności online i subskrypcje.', category: 'api', packages: ['stripe', '@stripe/stripe-js'], isDev: false, repo: 'https://stripe.com' },
-  { id: 'resend', name: 'Resend Email', desc: 'Automatyzacja wysyłki maili.', category: 'api', packages: ['resend', '@react-email/components'], isDev: false, repo: 'https://resend.com' },
-  { id: 'uploadthing', name: 'Uploadthing', desc: 'Upload plików do chmury (S3).', category: 'api', packages: ['uploadthing'], isDev: false, repo: 'https://uploadthing.com' },
-  { id: 'sentry', name: 'Sentry Error Log', desc: 'Monitor błędów w produkcji.', category: 'api', packages: ['@sentry/nextjs'], isDev: false, repo: 'https://sentry.io' },
+  { id: 'stripe', name: 'Stripe Payments', desc: 'stripe_desc', category: 'api', packages: ['stripe', '@stripe/stripe-js'], isDev: false, repo: 'https://stripe.com' },
+  { id: 'resend', name: 'Resend Email', desc: 'resend_desc', category: 'api', packages: ['resend', '@react-email/components'], isDev: false, repo: 'https://resend.com' },
+  { id: 'uploadthing', name: 'Uploadthing', desc: 'uploadthing_desc', category: 'api', packages: ['uploadthing'], isDev: false, repo: 'https://uploadthing.com' },
+  { id: 'sentry', name: 'Sentry Error Log', desc: 'sentry_desc', category: 'api', packages: ['@sentry/nextjs'], isDev: false, repo: 'https://sentry.io' },
   
-  { id: 'redis', name: 'Upstash Redis KV', desc: 'Szybka baza do cache / rate-limits.', category: 'api', packages: ['@upstash/redis'], isDev: false, repo: 'https://upstash.com' },
-  { id: 'datefns', name: 'Date-fns', desc: 'Łatwe zarządzanie datami React.', category: 'state', packages: ['date-fns'], isDev: false, repo: 'https://date-fns.org' },
-  { id: 'pusher', name: 'Pusher Realtime', desc: 'Websockety do chatu / live eventów.', category: 'api', packages: ['pusher-js'], isDev: false, repo: 'https://pusher.com' },
-  { id: 'markdown', name: 'Markdown Stack', desc: 'Wsparcie wpisów MD na bloga.', category: 'api', packages: ['react-markdown', 'rehype-raw', 'remark-gfm'], isDev: false, repo: 'https://github.com/remarkjs/react-markdown' },
-  { id: 'sonner', name: 'Sonner Toasts', desc: 'Szybkie powiadomienia wyskakujące (Toaster).', category: 'ui', packages: ['sonner'], isDev: false, repo: 'https://sonner.emilkowal.ski' }
+  { id: 'redis', name: 'Upstash Redis KV', desc: 'redis_desc', category: 'api', packages: ['@upstash/redis'], isDev: false, repo: 'https://upstash.com' },
+  { id: 'datefns', name: 'Date-fns', desc: 'datefns_desc', category: 'state', packages: ['date-fns'], isDev: false, repo: 'https://date-fns.org' },
+  { id: 'pusher', name: 'Pusher Realtime', desc: 'pusher_desc', category: 'api', packages: ['pusher-js'], isDev: false, repo: 'https://pusher.com' },
+  { id: 'markdown', name: 'Markdown Stack', desc: 'markdown_desc', category: 'api', packages: ['react-markdown', 'rehype-raw', 'remark-gfm'], isDev: false, repo: 'https://github.com/remarkjs/react-markdown' },
+  { id: 'sonner', name: 'Sonner Toasts', desc: 'sonner_desc', category: 'ui', packages: ['sonner'], isDev: false, repo: 'https://sonner.emilkowal.ski' }
 ]
 
 export default function SetupWizard() {
   const [step, setStep] = useState(1)
-  const [lang, setLang] = useState<"pl" | "en">("pl")
+  const [lang, setLang] = useState<"pl" | "en">("en")
   const t = (key: string) => TRANSLATIONS[lang][key] || key
 
   const PACKAGE_CATEGORIES = [
@@ -138,7 +138,7 @@ export default function SetupWizard() {
      const timer = setTimeout(async () => {
          const res = await generateLivePreview(selectedTemplate || 'saas-ai', { ...branding, lang });
          if(res?.timestamp) {
-             // Nie zmieniamy klucza Iframe żeby Next.js Hot Reload zadziałał gładko przez stelaż!
+             setLivePreviewTimestamp(Date.now());
              console.log('[MDK Live Preview] Nowy build hmr zrzucony do /live-preview');
          }
      }, 1000);
@@ -402,19 +402,19 @@ export default function SetupWizard() {
                    <div className="p-6 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
                       <div className="space-y-6">
                          <div className="space-y-3">
-                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Type size={14} className="text-[#f97316]"/> Główne LOGO (Tekst)</label>
-                            <input type="text" value={branding.companyName} onChange={(e) => setBranding({...branding, companyName: e.target.value})} placeholder="np. MDK Startup" className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
+                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Type size={14} className="text-[#f97316]"/> {t('logo_text')}</label>
+                            <input type="text" value={branding.companyName} onChange={(e) => setBranding({...branding, companyName: e.target.value})} placeholder={t('logo_placeholder')} className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                          </div>
                          <div className="space-y-3">
-                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Megaphone size={14} className="text-[#f97316]"/> Call-to-Action</label>
-                            <input type="text" value={branding.ctaText} onChange={(e) => setBranding({...branding, ctaText: e.target.value})} placeholder="Rozpocznij" className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
+                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Megaphone size={14} className="text-[#f97316]"/> {t('cta_btn_text')}</label>
+                            <input type="text" value={branding.ctaText} onChange={(e) => setBranding({...branding, ctaText: e.target.value})} placeholder={t('cta_placeholder')} className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm" />
                          </div>
                          <div className="space-y-3">
-                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><ImageIcon size={14} className="text-[#f97316]"/> URL Obrazka (Hero)</label>
+                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><ImageIcon size={14} className="text-[#f97316]"/> {t('hero_image')}</label>
                             <input type="text" value={branding.heroImageUrl} onChange={(e) => setBranding({...branding, heroImageUrl: e.target.value})} placeholder="https://images.unsplash..." className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-xs" />
                          </div>
                          <div className="space-y-3">
-                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Palette size={14} className="text-[#f97316]"/> Kolor Przewodni (HEX)</label>
+                            <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><Palette size={14} className="text-[#f97316]"/> {t('primary_color')}</label>
                             <div className="flex gap-4">
                                <input type="color" value={branding.primaryColor} onChange={(e) => setBranding({...branding, primaryColor: e.target.value})} className="w-12 h-12 bg-black border border-zinc-800 p-0.5 cursor-pointer shrink-0" />
                                <input type="text" value={branding.primaryColor} onChange={(e) => setBranding({...branding, primaryColor: e.target.value})} className="flex-1 h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono uppercase" />
@@ -426,39 +426,39 @@ export default function SetupWizard() {
                             <h3 className="text-[10px] font-black uppercase text-[#f97316]">{t('content_editor')}</h3>
                             <div className="space-y-3">
                                <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_title_editor')}</label>
-                               <textarea rows={2} value={branding.heroTitle || ''} onChange={(e) => setBranding({...branding, heroTitle: e.target.value})} placeholder="np. Zbuduj swój <br/> wspaniały startup <span style='color: var(--mdk-primary)'>z MDK.</span>" className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
+                               <textarea rows={2} value={branding.heroTitle || ''} onChange={(e) => setBranding({...branding, heroTitle: e.target.value})} placeholder={t('hero_title_placeholder')} className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                                <p className="text-[9px] text-zinc-600">Tip: Użyj &lt;br/&gt; i &lt;span style=...&gt;</p>
                             </div>
                             <div className="space-y-3">
                                <label className="text-xs font-bold text-zinc-400 uppercase">{t('hero_desc_editor')}</label>
-                               <textarea rows={2} value={branding.heroDesc || ''} onChange={(e) => setBranding({...branding, heroDesc: e.target.value})} placeholder="np. Platforma do kreowania oprogramowania..." className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
+                               <textarea rows={2} value={branding.heroDesc || ''} onChange={(e) => setBranding({...branding, heroDesc: e.target.value})} placeholder={t('hero_desc_placeholder')} className="w-full bg-zinc-900 border border-zinc-800 p-3 text-white focus:border-[#f97316] outline-none font-mono text-xs resize-none" />
                             </div>
                          </div>
 
                          <div className="pt-6 border-t border-zinc-900 space-y-6">
                             <div className="space-y-3">
-                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> Profil Typografii</label>
+                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> {t('typography')}</label>
                                <select value={branding.typography} onChange={(e) => setBranding({...branding, typography: e.target.value})} className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm cursor-pointer">
-                                  <option value="geist">Geist Sans (Natywny)</option>
-                                  <option value="inter">Inter (Klasyczny SaaS)</option>
-                                  <option value="playfair">Playfair Display (Premium)</option>
-                                  <option value="outfit">Outfit (Startup)</option>
+                                  <option value="geist">{t('type_geist')}</option>
+                                  <option value="inter">{t('type_inter')}</option>
+                                  <option value="playfair">{t('type_playfair')}</option>
+                                  <option value="outfit">{t('type_outfit')}</option>
                                </select>
                             </div>
                             <div className="space-y-3">
-                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> Styl Navbara</label>
+                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> {t('navbar_style')}</label>
                                <select value={branding.navbarStyle} onChange={(e) => setBranding({...branding, navbarStyle: e.target.value})} className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm cursor-pointer">
-                                  <option value="glass">Szklisty (Kapsuła 3D)</option>
-                                  <option value="minimal">Minimalistyczny (Rozciągnięty)</option>
-                                  <option value="hidden">Ukryty (Brak)</option>
+                                  <option value="glass">{t('nav_glass')}</option>
+                                  <option value="minimal">{t('nav_minimal')}</option>
+                                  <option value="hidden">{t('nav_hidden')}</option>
                                </select>
                             </div>
                             <div className="space-y-3">
-                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> Styl Stopki</label>
+                               <label className="text-xs font-bold text-zinc-400 uppercase flex items-center gap-2"><LayoutTemplate size={14}/> {t('footer_style')}</label>
                                <select value={branding.footerStyle} onChange={(e) => setBranding({...branding, footerStyle: e.target.value})} className="w-full h-12 bg-black border border-zinc-800 px-4 text-white focus:border-[#f97316] outline-none font-mono text-sm cursor-pointer">
-                                  <option value="default">Standardowa (Listy B2B)</option>
-                                  <option value="glass">Szklista Pływająca (Premium)</option>
-                                  <option value="minimal">Mała (Tylko Copyright)</option>
+                                  <option value="default">{t('foot_default')}</option>
+                                  <option value="glass">{t('foot_glass')}</option>
+                                  <option value="minimal">{t('foot_minimal')}</option>
                                </select>
                             </div>
                              <div className="pt-6 border-t border-zinc-900 space-y-4">
@@ -468,11 +468,11 @@ export default function SetupWizard() {
                                 </h3>
                                  <div className="space-y-2">
                                  {[
-                                     { id: 'chatbot', name: 'Chatbot AI B2B' },
-                                     { id: 'calculator', name: 'Kalkulator B2B' },
-                                     { id: 'testimonials', name: 'Karuzela Opinii' },
-                                     { id: 'pricing', name: 'Plany Abonamentowe' },
-                                     { id: 'faq', name: 'Zwijane Sekcje (FAQ)' }
+                                     { id: 'chatbot', name_key: 'chatbot_name', name_fallback: 'Chatbot AI B2B' },
+                                     { id: 'calculator', name_key: 'calculator_name', name_fallback: 'Kalkulator B2B' },
+                                     { id: 'testimonials', name_key: 'testimonials_name', name_fallback: 'Karuzela Opinii' },
+                                     { id: 'pricing', name_key: 'pricing_name', name_fallback: 'Plany Abonamentowe' },
+                                     { id: 'faq', name_key: 'faq_name', name_fallback: 'Zwijane Sekcje (FAQ)' }
                                  ].map((m) => {
                                       const isChecked = branding.modules[m.id as keyof typeof branding.modules];
                                       return (
@@ -483,17 +483,17 @@ export default function SetupWizard() {
                                                     setBranding({...branding, modules: {...branding.modules, [m.id]: checked}});
                                                     if(checked) {
                                                         const { installMdkModule } = await import('../../lib/actions/install-module');
-                                                        setDownloadingModule(m.name);
+                                                        setDownloadingModule(m.name_fallback);
                                                         const res = await installMdkModule(m.id);
                                                         setDownloadingModule(null);
                                                         if(res.error) console.error(res.error);
                                                     }
                                                }} className="accent-[#f97316] w-4 h-4 cursor-pointer" />
-                                               <span className="font-bold text-xs uppercase tracking-widest text-white">{m.name}</span>
+                                               <span className="font-bold text-xs uppercase tracking-widest text-white">{t(m.name_key)}</span>
                                             </div>
                                             {m.id === 'chatbot' && isChecked && (
                                                 <div className="mt-3 pt-3 border-t border-zinc-800/50">
-                                                   <input type="text" placeholder="Wypełnij wiedzę asystentowi B2B..." value={branding.modules.chatbotContext} onChange={(e) => setBranding({...branding, modules: {...branding.modules, chatbotContext: e.target.value}})} className="w-full bg-black border border-zinc-700 px-3 py-2 text-white outline-none font-mono text-[10px]" />
+                                                   <input type="text" placeholder={t('chatbot_placeholder')} value={branding.modules.chatbotContext} onChange={(e) => setBranding({...branding, modules: {...branding.modules, chatbotContext: e.target.value}})} className="w-full bg-black border border-zinc-700 px-3 py-2 text-white outline-none font-mono text-[10px]" />
                                                 </div>
                                             )}
                                         </label>
@@ -523,7 +523,7 @@ export default function SetupWizard() {
                            </div>
                         </div>
                         <div className="flex-1 relative overflow-hidden bg-[#0A0A0A]">
-                           <iframe src="/live-preview" className="absolute inset-0 w-full h-full border-0 bg-transparent z-10" />
+                           <iframe src="/live-preview" key={livePreviewTimestamp} className="absolute inset-0 w-full h-full border-0 bg-transparent z-10" />
                            <div className="absolute inset-0 flex flex-col items-center justify-center -z-10 bg-black/50">
                                <Loader2 size={32} className="animate-spin text-zinc-500 mb-4" />
                                <span className="font-mono text-xs uppercase tracking-widest text-zinc-600">{t('live_preview_loading')}</span>
@@ -574,7 +574,7 @@ export default function SetupWizard() {
                                  </h3>
                                  <input type="checkbox" checked={isSelected} readOnly className="accent-[#f97316] h-4 w-4" />
                               </div>
-                              <p className="text-zinc-500 text-xs line-clamp-2">{pkg.desc}</p>
+                              <p className="text-zinc-500 text-xs line-clamp-2">{t(pkg.desc)}</p>
                            </div>
                            <div className="mt-3 pt-3 border-t border-zinc-900 flex justify-between items-center">
                               <span className="text-[10px] font-mono text-zinc-600 uppercase">{pkg.category}</span>
@@ -614,16 +614,16 @@ export default function SetupWizard() {
 
                <div className="space-y-6">
                   <div className="space-y-3">
-                     <label className="text-xs font-bold text-zinc-400 uppercase">NEXT_PUBLIC_SUPABASE_URL (Opcjonalne dla szablonu, Wymagane dla CMS)</label>
-                     <input type="text" value={branding.supabaseUrl} onChange={(e) => setBranding({...branding, supabaseUrl: e.target.value})} placeholder="https://twoj-projekt-url.supabase.co" className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
+                     <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_url_label')}</label>
+                     <input type="text" value={branding.supabaseUrl} onChange={(e) => setBranding({...branding, supabaseUrl: e.target.value})} placeholder={t('supabase_url_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
                   </div>
                   <div className="space-y-3">
-                     <label className="text-xs font-bold text-zinc-400 uppercase">NEXT_PUBLIC_SUPABASE_ANON_KEY (Wymagane)</label>
+                     <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_anon_label')}</label>
                      <input type="password" value={branding.supabaseAnonKey} onChange={(e) => setBranding({...branding, supabaseAnonKey: e.target.value})} placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
                   </div>
                   <div className="space-y-3">
-                     <label className="text-xs font-bold text-zinc-400 uppercase">SUPABASE_SERVICE_ROLE_KEY (Opcjonalne zlecenia backendowe)</label>
-                     <input type="password" value={branding.supabaseServiceRole} onChange={(e) => setBranding({...branding, supabaseServiceRole: e.target.value})} placeholder="eyJhbG... (Omija bezpieczeństwo RLS w Server Actions)" className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
+                     <label className="text-xs font-bold text-zinc-400 uppercase">{t('supabase_role_label')}</label>
+                     <input type="password" value={branding.supabaseServiceRole} onChange={(e) => setBranding({...branding, supabaseServiceRole: e.target.value})} placeholder={t('supabase_role_placeholder')} className="w-full h-12 bg-black border border-zinc-700 px-4 text-white focus:border-[#EAB308] outline-none font-mono text-sm" />
                   </div>
                </div>
 
@@ -652,7 +652,7 @@ export default function SetupWizard() {
                   
                   {isInstalling && (
                      <div className="flex gap-4 mt-6 text-white items-center animate-pulse">
-                        <Loader2 size={18} className="animate-spin" /> Mielenie surowego kodu źródłowego na dysku...
+                        <Loader2 size={18} className="animate-spin" /> {t('processing_source')}
                      </div>
                   )}
                </div>
