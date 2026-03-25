@@ -41,7 +41,7 @@ export default function ClientWebsite() {
             <div className="flex flex-col items-center text-center p-6 border-y md:border-y-0 md:border-x border-stone-100">
                <Phone size={48} style={{ color: '#a80011' }} className="mb-6 drop-shadow-md" />
                <h3 className="text-xl font-bold uppercase mb-2 tracking-tight">Linia Otwarta</h3>
-               <p className="text-stone-500 font-medium">+48 777 888 999<br/>kontakt@złotamedycyna.com</p>
+               <p className="text-stone-500 font-medium">+48 777 888 999<br/>contact@goldmed.com</p>
             </div>
             <div className="flex flex-col items-center text-center p-6">
                <Clock size={48} style={{ color: '#a80011' }} className="mb-6 drop-shadow-md" />

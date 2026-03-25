@@ -83,13 +83,14 @@ export async function runSetupAction(packages: string[], config: any) {
     }
 
     // 2. INJECTION OF REGISTRY ARCHITECTURE (Registry Pattern)
-    // Zamiast wstrzykiwać kod z ogromnych brzydkich i ciężkich plików JS do repozytorium, 
-    // architekci pobierają szablony jako czysty surowy tekst 
-    // albo po URL (.fetch('https...')) albo z wydzielonego pliku lokalnego 'registry/'.
-    // W tej implementacji symulujemy fetch czytając przygotowany na zewnątrz czysty TXT.
+    // Instead of injecting code from massive, heavy JS files into the repository, 
+    // architects fetch templates as clean raw text 
+    // either via URL (.fetch('https...')) or from an isolated local 'registry/' folder.
+    // In this implementation, we simulate fetch by reading an external raw TXT file.
     
     // Searching for matching file in separate repository/folder 'registry/' (Like in shadcn CLI)
-    const registryFileName = config.templateId + '.txt';
+    const isEn = config.lang === 'en';
+    const registryFileName = config.templateId + (isEn ? '-en' : '-pl') + '.txt';
     // MDK searches files from ISOLATED repository (folder isolated outside main project base)
     const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'templates', registryFileName);
     
@@ -97,7 +98,7 @@ export async function runSetupAction(packages: string[], config: any) {
     try {
         rawCodeStr = fs.readFileSync(registryPath, 'utf-8');
     } catch(e) {
-        // Fallback w przypadku braku wybranego szablonu tekstowego (Fail-safe)
+        // Fallback in case of missing text template (Fail-safe)
         rawCodeStr = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'templates', 'saas-ai.txt'), 'utf-8');
     }
 
@@ -113,11 +114,17 @@ export async function runSetupAction(packages: string[], config: any) {
     if (config.branding.useAI && config.branding.aiKey && config.branding.seoKeywords) {
         console.log(`[MDK AI] Hitting endpoints ${config.branding.aiProvider.toUpperCase()} in REST API mode...`)
         try {
-            const contextAddon = config.branding.aiContext ? `Dodatkowy kontekst od kierownika projektu: ${config.branding.aiContext}` : '';
-            const optDb = config.branding.generateDatabase ? `, klucz "sqlSchema" z czystym poprawnym kodem SQL tworzącym 3 pełne tabele do bazy Supabase` : '';
-            const optTop = config.branding.generateTopology ? `, oraz klucz "subpages" z tablicą (min. 2 obiekty: "slug" url podstrony bez ukośnika, "title" nagłówek, "content" wyczerpujący kod HTML podstrony)` : '';
+            const contextAddon = config.branding.aiContext 
+               ? (isEn ? `Additional context from project manager: ${config.branding.aiContext}` : `Dodatkowy kontekst od kierownika projektu: ${config.branding.aiContext}`) 
+               : '';
+            const optDb = config.branding.generateDatabase 
+               ? (isEn ? `, key "sqlSchema" with clean valid SQL code creating 3 full tables for Supabase` : `, klucz "sqlSchema" z czystym poprawnym kodem SQL tworzącym 3 pełne tabele do bazy Supabase`) 
+               : '';
+            const optTop = config.branding.generateTopology 
+               ? (isEn ? `, and key "subpages" with array (min. 2 objects: "slug" url without slash, "title" heading, "content" exhaustive HTML code of subpage)` : `, oraz klucz "subpages" z tablicą (min. 2 obiekty: "slug" url podstrony bez ukośnika, "title" nagłówek, "content" wyczerpujący kod HTML podstrony)`) 
+               : '';
             
-            const isEn = config.lang === 'en';
+
             const prompt = isEn 
               ? `You are a world-class SEO expert and MDK Developer. Company name: "${brandName}". Main SEO keywords: "${config.branding.seoKeywords}". ${contextAddon}. Return ONLY a clean JSON object. Content: "heroTitle" (max 4 words, aggressive B2B title), "heroDesc" (Description around 250 characters with intelligently packed keywords)${optDb}${optTop}.`
               : `Jesteś światowej klasy ekspertem SEO i Programistą MDK. Nazwa firmy: "${brandName}". Główne słowa kluczowe SEO: "${config.branding.seoKeywords}". ${contextAddon}. Zwróć TYLKO czysty obiekt w poprawnym formacie JSON. Zawartość: "heroTitle" (max 4 słowa, agresywny tytuł B2B), "heroDesc" (Opis na ok. 250 znaków upchnięte bardzo inteligentnie słowa kluczowe)${optDb}${optTop}.`;
@@ -209,11 +216,11 @@ export async function runSetupAction(packages: string[], config: any) {
                     aiHeroTitle = aiResult.heroTitle
                 }
                 aiHeroDesc = aiResult.heroDesc
-                console.log("[MDK AI] Sukces. Model API dostarczył wylosowany i trafny Copywriting JSON.")
+                console.log("[MDK AI] Success. Model API provided appropriate Copywriting JSON.")
                 
                 // FEATURE 4: Multi-Page Topology Build
                 if (config.branding.generateTopology && aiResult.subpages && Array.isArray(aiResult.subpages)) {
-                   console.log(`[MDK AI] Generowanie ${aiResult.subpages.length} podstron Topologicznych (Routing Next.js)...`)
+                   console.log(`[MDK AI] Generating ${aiResult.subpages.length} Topological subpages (Next.js Routing)...`)
                    aiResult.subpages.forEach((page: any) => {
                       try {
                          const cleanSlug = page.slug.replace(/[^a-z0-9-]/gi, '').toLowerCase();
@@ -257,7 +264,7 @@ export async function runSetupAction(packages: string[], config: any) {
                 const cssText = fs.readFileSync(cssPath, 'utf-8');
                 if (!cssText.includes('--mdk-primary')) {
                     fs.appendFileSync(cssPath, `\n\n/* ----- MDK GLOBAL ENGINE INJECTION ----- */\n@layer base {\n  :root {\n    --mdk-primary: ${primaryColor};\n  }\n}\n`);
-                    console.log(`[MDK SYSTEM] Wpięto globalnie: --mdk-primary do globals.css z HEX: ${primaryColor}.`);
+                    console.log(`[MDK SYSTEM] Globally injected: --mdk-primary to globals.css with HEX: ${primaryColor}`);
                 }
             }
         } catch (e) {
@@ -269,10 +276,10 @@ export async function runSetupAction(packages: string[], config: any) {
        .replace(/{{COMPANY_NAME}}/g, brandName)
        .replace(/{{PRIMARY_COLOR}}/g, primaryColor)
        .replace(/{{HERO_IMAGE}}/g, heroImage)
-       .replace(/{{CTA_TEXT}}/g, config.branding.ctaText || "Zaloguj")
+       .replace(/{{CTA_TEXT}}/g, config.branding.ctaText || "Sign In")
        .replace(/{{CONTACT_PHONE}}/g, config.branding.contactPhone || "+48 000 000 000")
-       .replace(/{{CONTACT_EMAIL}}/g, config.branding.contactEmail || "kontakt@firma.pl")
-       .replace(/{{ADDRESS}}/g, config.branding.address || "ul. Przykładowa 1")
+       .replace(/{{CONTACT_EMAIL}}/g, config.branding.contactEmail || "contact@company.com")
+       .replace(/{{ADDRESS}}/g, config.branding.address || "123 Example St")
        // Flagowane znaczniki AI
        .replace(/{{HERO_TITLE}}/g, aiHeroTitle)
        .replace(/{{HERO_DESC}}/g, aiHeroDesc);
@@ -290,7 +297,7 @@ export async function runSetupAction(packages: string[], config: any) {
          </div>
          <nav className="flex items-center gap-6 text-sm font-bold tracking-widest uppercase">
             <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Services</span>
-            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Cennik</span>
+            <span className="hidden sm:block text-zinc-400 hover:text-white transition-colors cursor-pointer">Pricing</span>
             <button className="text-black px-6 py-2 rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '{{PRIMARY_COLOR}}' }}>{{CTA_TEXT}}</button>
          </nav>
       </header>
@@ -322,11 +329,11 @@ export async function runSetupAction(packages: string[], config: any) {
             </div>
             <div className="flex flex-col gap-3 text-sm font-bold uppercase tracking-widest text-zinc-400">
                <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Start</span>
-               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Oferta</span>
-               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Kosztorys</span>
+               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Offer</span>
+               <span className="hover:text-[var(--mdk-primary)] cursor-pointer transition-colors">Estimator</span>
             </div>
             <div>
-               <p className="font-mono text-zinc-500 mb-2">Szybki Kontakt</p>
+               <p className="font-mono text-zinc-500 mb-2">Quick Contact</p>
                <p className="text-xl font-black text-white mb-1">{{CONTACT_PHONE}}</p>
                <p className="text-[var(--mdk-primary)]">{{CONTACT_EMAIL}}</p>
             </div>
@@ -369,7 +376,8 @@ export async function runSetupAction(packages: string[], config: any) {
         );
 
         for (const modId of activeModules) {
-            const fileName = MODULE_FILES_MAP[modId];
+
+            const fileName = MODULE_FILES_MAP[modId].replace('.txt', `${isEn ? '-en' : '-pl'}.txt`);
             const className = modId.charAt(0).toUpperCase() + modId.slice(1); 
             
             console.log(`[MDK SYSTEM] Pobieranie Modułu ${className} ze zdalnego repozytorium...`);

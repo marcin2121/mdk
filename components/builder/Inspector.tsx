@@ -112,7 +112,7 @@ export default function Inspector() {
 
        <div className="flex-1 overflow-y-auto w-full space-y-8 pr-2">
 
-           {/* --- SEKCJA 1: QUICK DESIGN (KOLORY) --- */}
+           {/* --- SECTION 1: QUICK DESIGN (COLORS) --- */}
            <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-4 flex items-center gap-2">
                  <Palette size={14} className="text-[#f97316]"/> Quick Design
@@ -131,7 +131,7 @@ export default function Inspector() {
                           <input 
                              type="text" 
                              value={currentStyle.backgroundColor || ""} 
-                             placeholder="np. #ff0000"
+                             placeholder="e.g. #ff0000"
                              onChange={(e) => handleStyleChange("backgroundColor", e.target.value)}
                              className="w-full bg-transparent text-white font-mono text-xs outline-none"
                           />
@@ -152,7 +152,7 @@ export default function Inspector() {
                           <input 
                              type="text" 
                              value={currentStyle.color || ""} 
-                             placeholder="np. #ffffff"
+                             placeholder="e.g. #ffffff"
                              onChange={(e) => handleStyleChange("color", e.target.value)}
                              className="w-full bg-transparent text-white font-mono text-xs outline-none"
                           />
@@ -161,7 +161,7 @@ export default function Inspector() {
                </div>
            </div>
 
-            {/* --- SEKCJA 1C: NOWOCZESNE PRESETY STYLÓW --- */}
+            {/* --- SECTION 1C: MODERN STYLE PRESETS --- */}
            <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-2">
                  <div className="w-2.5 h-2.5 bg-gradient-to-tr from-[#f97316] to-pink-500 rounded-full"></div> Effects & Styles (Presets)
@@ -204,7 +204,7 @@ export default function Inspector() {
                </button>
            </div>
 
-           {/* --- SEKCJA 1B: SMART LAYOUT (TAILWIND TOGGLES) --- */}
+           {/* --- SECTION 1B: SMART LAYOUT (TAILWIND TOGGLES) --- */}
             {(CONTAINER_TYPES as unknown as string[]).includes(activeNode.type) && (
               <div className="space-y-4 bg-zinc-900/40 border border-zinc-800 p-4 rounded-lg">
                   <h3 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-2">

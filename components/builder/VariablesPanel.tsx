@@ -26,26 +26,26 @@ export default function VariablesPanel() {
   return (
     <div className="flex-1 flex flex-col h-full bg-[#050505]/50">
         
-        {/* FORMULARZ ADD */}
+        {/* ADD FORM */}
         <form onSubmit={handleAdd} className="p-4 border-b border-zinc-900 bg-zinc-900/10 space-y-3">
              <h4 className="text-[10px] font-black text-white tracking-widest uppercase mb-2 flex items-center gap-1">
                  <Plus size={12} className="text-[#f97316]"/> Add Prop / Variable
              </h4>
 
              <div className="space-y-1">
-                 <label className="text-[9px] font-bold text-zinc-500 uppercase">Nazwa (camelCase)</label>
+                 <label className="text-[9px] font-bold text-zinc-500 uppercase">Name (camelCase)</label>
                  <input 
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="np. title, count"
+                    placeholder="e.g. title, count"
                     className="w-full bg-black border border-zinc-800 text-white font-mono text-xs h-8 px-2 outline-none focus:border-[#f97316] rounded-sm"
                  />
              </div>
 
              <div className="grid grid-cols-2 gap-2">
                  <div className="space-y-1">
-                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Typ</label>
+                     <label className="text-[9px] font-bold text-zinc-500 uppercase">Type</label>
                      <select 
                         value={type}
                         onChange={(e) => setType(e.target.value as "string" | "number")}
@@ -61,21 +61,21 @@ export default function VariablesPanel() {
                         type="text"
                         value={defaultValue}
                         onChange={(e) => setDefaultValue(e.target.value)}
-                        placeholder="np. Hello"
+                        placeholder="e.g. Hello"
                         className="w-full bg-black border border-zinc-800 text-white text-xs h-8 px-2 outline-none focus:border-[#f97316] rounded-sm"
                      />
                  </div>
              </div>
 
              <button type="submit" className="w-full bg-[#f97316] hover:bg-white text-black font-bold uppercase tracking-widest text-[10px] py-2 rounded-md transition-colors flex items-center justify-center gap-1 shadow-lg mt-2">
-                 <Plus size={12} /> Dodaj Wynik
+                 <Plus size={12} /> Add Variable
              </button>
         </form>
 
-        {/* LISTA ZMIENNYCH */}
+        {/* VARIABLES LIST */}
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
              <h4 className="text-[10px] font-black text-zinc-500 tracking-widest uppercase mb-3 flex items-center gap-1">
-                 <Database size={12}/> Aktywne Propsy
+                 <Database size={12}/> Active Props
              </h4>
 
              {Object.keys(variables).length === 0 ? (
