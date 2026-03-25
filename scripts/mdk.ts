@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
-const readline = require('readline');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import readline from 'readline';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -19,7 +18,7 @@ if (!command) {
 🔧 MDK CLI — Modular Plugin System
 
 Usage:
-   node scripts/mdk.js add <module>
+   npm run mdk add <module>
 
 Available Modules:
    - chatbot       (AI Assistant with dynamic provider prompt)
@@ -40,7 +39,6 @@ if (command === 'add') {
     if (componentId === 'chatbot') {
         installChatbot();
     } else {
-        // Generic installer for other widgets without custom prompts yet
         installGenericComponent(componentId);
     }
 }
@@ -64,20 +62,17 @@ function installChatbot() {
                 console.warn('⚠️  Warning: API Key was left empty. You can set it in .env.local later.');
             }
 
-            // Map provider to its env key
-            const envMap = {
+            const envMap: Record<string, string> = {
                 gemini: 'GEMINI_API_KEY',
                 openai: 'OPENAI_API_KEY',
                 anthropic: 'ANTHROPIC_API_KEY'
             };
 
-            // Save to .env.local
             updateEnvFile({
                 [envMap[prov]]: key,
                 'NEXT_PUBLIC_AI_PROVIDER': prov
             });
 
-            // 1. Fetch file from registry
             const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'components', 'chatbot.txt');
             const targetPath = path.join(process.cwd(), 'components', 'mdk', 'Chatbot.tsx');
 
@@ -87,18 +82,13 @@ function installChatbot() {
                 process.exit(1);
             }
 
-            // Ensure directory exists
             fs.mkdirSync(path.join(process.cwd(), 'components', 'mdk'), { recursive: true });
 
-            let content = fs.readFileSync(registryPath, 'utf-8');
-            
-            // Rewrite the internal API caller inside chatbot so it supports the prompt?
-            // Optional, could just use existing chatbot template logic
+            const content = fs.readFileSync(registryPath, 'utf-8');
             fs.writeFileSync(targetPath, content, 'utf-8');
             console.log(`\n✅ Written component to: components/mdk/Chatbot.tsx`);
 
-            // 2. Install dependencies
-            const packageMap = {
+            const packageMap: Record<string, string[]> = {
                 gemini: ['@google/generative-ai'],
                 openai: ['openai'],
                 anthropic: ['@anthropic-ai/sdk']
@@ -110,7 +100,7 @@ function installChatbot() {
             try {
                 execSync(`npm install ${deps.join(' ')} --save`, { stdio: 'inherit' });
                 console.log(`\n🎉 Chatbot added successfully! Import it via: '@/components/mdk/Chatbot'`);
-            } catch (err) {
+            } catch (err: any) {
                 console.error('❌ Failed to install packages:', err.message);
             }
 
@@ -119,7 +109,7 @@ function installChatbot() {
     });
 }
 
-function installGenericComponent(modId) {
+function installGenericComponent(modId: string) {
     const registryPath = path.join(process.cwd(), '..', 'mdk-registry', 'components', `${modId}.txt`);
     const targetPath = path.join(process.cwd(), 'components', 'mdk', `${modId.charAt(0).toUpperCase() + modId.slice(1)}.tsx`);
 
@@ -135,7 +125,7 @@ function installGenericComponent(modId) {
     rl.close();
 }
 
-function updateEnvFile(values) {
+function updateEnvFile(values: Record<string, string>) {
     const envPath = path.join(process.cwd(), '.env.local');
     let content = "";
     if (fs.existsSync(envPath)) {
