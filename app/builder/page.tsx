@@ -25,7 +25,7 @@ export default function BuilderPage() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-         distance: 8, // 8px minimalnego przesunięcia przed rozpoczęciem Drag klocka
+         distance: 8, // 8px minimum movement before starting block drag
       },
     })
   );
@@ -38,7 +38,7 @@ export default function BuilderPage() {
         setIsImportModalOpen(false);
         setImportCode("");
      } else {
-        setImportError(res.error || "Wystąpił błąd parsowania kodu.");
+        setImportError(res.error || "An error occurred while parsing the code.");
      }
   };
 
@@ -46,9 +46,9 @@ export default function BuilderPage() {
      setIsPublishing(true);
      const res = await publishBuilderCode(nodes, builderMode, variables);
      if (res.success) {
-        alert("Kod opublikowany! Przejdź do strony głównej (/) żeby zobaczyć efekt.");
+        alert("Code published! Go to the homepage (/) to see the result.");
      } else {
-        alert("Wystąpił błąd publikacji.");
+        alert("A publishing error occurred.");
      }
      setIsPublishing(false);
   };
@@ -109,13 +109,13 @@ export default function BuilderPage() {
                            onClick={() => setBuilderMode("page")}
                            className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors ${builderMode === "page" ? "bg-white text-black" : "text-zinc-500 hover:text-white"}`}
                         >
-                           Strona
+                           Page
                         </button>
                         <button 
                            onClick={() => setBuilderMode("component")}
                            className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors ${builderMode === "component" ? "bg-[#f97316] text-black" : "text-zinc-500 hover:text-white"}`}
                         >
-                           Komponent
+                           Component
                         </button>
                     </div>
 
@@ -139,7 +139,7 @@ export default function BuilderPage() {
 
                     <div className="h-6 w-px bg-zinc-800" />
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Makiety:</span>
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Presets:</span>
                         <button onClick={() => setNodes(structuredClone(SAAS_STARTER_PRESET))} className="text-[10px] bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 font-bold px-3 py-1 rounded transition-colors">SaaS</button>
                         <button onClick={() => setNodes(structuredClone(PORTFOLIO_STARTER_PRESET))} className="text-[10px] bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 font-bold px-3 py-1 rounded transition-colors">Portfolio</button>
                         <button onClick={clearCanvas} className="text-[10px] bg-red-950/20 border border-red-900/50 hover:bg-red-900 hover:text-white text-red-500 font-bold px-3 py-1 rounded transition-colors">Reset</button>
@@ -159,7 +159,7 @@ export default function BuilderPage() {
                         disabled={isPublishing}
                         className="text-xs font-bold uppercase tracking-widest bg-zinc-900 border border-zinc-800 hover:border-[#f97316] px-4 py-1.5 transition-colors disabled:opacity-50"
                     >
-                        {isPublishing ? "Generowanie..." : "Opublikuj Kod"}
+                        {isPublishing ? "Generating..." : "Publish Code"}
                     </button>
                 </div>
             </div>
@@ -175,7 +175,7 @@ export default function BuilderPage() {
 
          <div className="w-80 shrink-0 border-l border-zinc-900 bg-[#050505] flex flex-col z-20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
             <div className="h-14 border-b border-zinc-900 flex items-center px-6">
-               <span className="font-bold text-xs uppercase tracking-widest text-[#f97316]">Inspektor Zmiennosći</span>
+               <span className="font-bold text-xs uppercase tracking-widest text-[#f97316]">Inspector Variables</span>
             </div>
             <Inspector />
          </div>
@@ -187,20 +187,20 @@ export default function BuilderPage() {
              <div className="w-full max-w-2xl bg-zinc-950 border border-zinc-900 rounded-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
                  <div className="p-5 border-b border-zinc-900 flex items-center justify-between">
                      <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                         <span className="text-emerald-400 text-lg">📋</span> Importuj Kod JSX / HTML
+                         <span className="text-emerald-400 text-lg">📋</span> Import JSX / HTML Code
                      </h3>
-                     <button onClick={() => setIsImportModalOpen(false)} className="text-zinc-500 hover:text-white transition-colors text-xs uppercase font-bold">Zamknij</button>
+                     <button onClick={() => setIsImportModalOpen(false)} className="text-zinc-500 hover:text-white transition-colors text-xs uppercase font-bold">Close</button>
                  </div>
                  <div className="flex-1 p-5 flex flex-col space-y-4 overflow-y-auto">
-                     <p className="text-[11px] text-zinc-400 leading-relaxed">Wklej płaski kod JSX lub HTML. System przekształci go na klocki.</p>
+                     <p className="text-[11px] text-zinc-400 leading-relaxed">Paste flat JSX or HTML code. The system will convert it into blocks.</p>
                      <div className="flex-1 flex flex-col">
                          <textarea rows={12} value={importCode} onChange={(e) => setImportCode(e.target.value)} placeholder={`<div className="bg-red-500 p-4">\n  <h1 className="text-white">Hello World</h1>\n</div>`} className="w-full flex-1 bg-black border border-zinc-800 text-green-400 font-mono text-xs p-4 outline-none resize-none rounded-md" />
                      </div>
-                     {importError && <div className="bg-red-950/30 border border-red-900/50 p-3 rounded-md text-red-400 text-xs font-mono">⚠️ Błąd: {importError}</div>}
+                     {importError && <div className="bg-red-950/30 border border-red-900/50 p-3 rounded-md text-red-400 text-xs font-mono">⚠️ Error: {importError}</div>}
                  </div>
                  <div className="p-5 border-t border-zinc-900 flex items-center justify-end gap-3 bg-zinc-900/20">
-                     <button onClick={() => setIsImportModalOpen(false)} className="text-xs font-bold text-zinc-400 hover:text-white px-4 py-2">Anuluj</button>
-                     <button onClick={handleImport} className="text-xs font-bold uppercase tracking-widest bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md transition-all shadow-lg">Importuj Klocki</button>
+                     <button onClick={() => setIsImportModalOpen(false)} className="text-xs font-bold text-zinc-400 hover:text-white px-4 py-2">Cancel</button>
+                     <button onClick={handleImport} className="text-xs font-bold uppercase tracking-widest bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-md transition-all shadow-lg">Import Blocks</button>
                  </div>
              </div>
          </div>

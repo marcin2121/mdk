@@ -41,5 +41,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.agent/skills/nextjs-app-router-patterns/SKILL.md
-.gitignore
+.agent/

@@ -1,8 +1,8 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { execSync } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+import { execSync } from 'child_process';
+import path from 'path';
+import fs from 'fs';
 
 const targetDir = process.argv[2] || 'my-mdk-app';
 const targetPath = path.join(process.cwd(), targetDir);
@@ -19,7 +19,7 @@ try {
   console.log(`\n📥 Downloading repository template (marcin2121/mdk)...`);
   execSync(`npx -y degit marcin2121/mdk "${targetDir}"`, { stdio: 'inherit' });
 
-  // Install dependencies automáticamente 
+  // Install dependencies automatically 
   console.log(`\n📦 Installing dependencies...`);
   execSync(`npm install`, { cwd: targetPath, stdio: 'inherit' });
 
@@ -29,7 +29,7 @@ try {
   console.log(`  npm run dev`);
   console.log(`\nYour browser will open up to start visual configuration wizard.`);
 
-} catch (error) {
+} catch (error: any) {
   console.error(`\n❌ Setup failed:`, error.message);
   process.exit(1);
 }

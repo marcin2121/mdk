@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import fs from "fs";
-import path from "path";
 import SetupWizard from "../components/wizard/setup-wizard";
 import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";

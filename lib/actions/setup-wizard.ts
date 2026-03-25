@@ -201,13 +201,13 @@ export async function runSetupAction(packages: string[], config: any) {
                 }
             }
 
-            // Globalne parsowanie odfiltrowanego tekstu nienależnie od modelu
+            // Global parsing of filtered text regardless of model
             if (extractedJsonText) {
-                // Wycięcie ewentualnych znaczników json
+                // Strip potential json markdown tags
                 const cleanJsonStr = extractedJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
                 const aiResult = JSON.parse(cleanJsonStr);
                 
-                // Wzbogacamy Tytuł o stylizację koloru na ostatnim słowie dla zachowania Brutalizmu Designu
+                // Enrich title with color styling on the last word to maintain Brutalist Design
                 const titleWords = aiResult.heroTitle.split(' ')
                 if(titleWords.length > 1) {
                     const lastWord = titleWords.pop()
@@ -231,13 +231,13 @@ export async function runSetupAction(packages: string[], config: any) {
                             const pageCode = `export default function ${cleanSlug.charAt(0).toUpperCase() + cleanSlug.slice(1)}Page() {\n   return (\n      <div className="min-h-screen bg-[#050505] text-white pt-32 px-6">\n         <div className="max-w-4xl mx-auto">\n            <h1 className="text-5xl font-black uppercase tracking-tighter mb-10 text-[var(--mdk-primary)]">${page.title}</h1>\n            <div className="text-zinc-400 font-medium leading-relaxed">${page.content}</div>\n         </div>\n      </div>\n   )\n}`;
                             fs.writeFileSync(path.join(dirPath, 'page.tsx'), pageCode);
                          }
-                      } catch (err) {}
+                      } catch (err) { console.warn('[MDK] Subpage generation skipped:', err); }
                    });
                 }
 
                 // FEATURE 2: Supabase Schema Generation
                 if (config.branding.generateDatabase && aiResult.sqlSchema) {
-                   console.log(`[MDK AI] Wytwarzanie potężnych skryptów migracyjnych Supabase (Folder: supabase/migrations)...`)
+                   console.log(`[MDK AI] Generating Supabase migration scripts (Folder: supabase/migrations)...`)
                    const migrationsDir = path.join(process.cwd(), 'supabase', 'migrations');
                    if (!fs.existsSync(migrationsDir)) fs.mkdirSync(migrationsDir, { recursive: true });
                    const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
@@ -245,12 +245,12 @@ export async function runSetupAction(packages: string[], config: any) {
                 }
             }
         } catch (e: any) {
-            console.error("[MDK AI] Krytyczny błąd w autoryzacji AI/Model API:", e)
-            return { error: `[Błąd Dostawcy AI] ${e.message || "Prawdopodobnie wprowadzono nieprawidłowy model, nieważny klucz API lub niedostępny endpoint. Spróbuj poprawić węzeł."}` };
+            console.error("[MDK AI] Critical error in AI/Model API authorization:", e)
+            return { error: `[AI Provider Error] ${e.message || "Invalid model, expired API key, or unavailable endpoint. Please check your configuration."}` };
         }
     }
 
-    // 4. KOMPILACJA W LOCIE (Regex Template Engine)
+    // 4. ON-THE-FLY COMPILATION (Regex Template Engine)
     let compiledCode = rawCodeStr;
 
     // FEATURE 3: Global Tailwind CSS JIT Injection (Replaces static style="" variables)
@@ -268,7 +268,7 @@ export async function runSetupAction(packages: string[], config: any) {
                 }
             }
         } catch (e) {
-            console.error("[MDK SYSTEM] Ostrzeżenie! Błąd nadpisywania CSS.", e);
+            console.error("[MDK SYSTEM] Warning! CSS overwrite error.", e);
         }
     }
 
@@ -280,7 +280,7 @@ export async function runSetupAction(packages: string[], config: any) {
        .replace(/{{CONTACT_PHONE}}/g, config.branding.contactPhone || "+48 000 000 000")
        .replace(/{{CONTACT_EMAIL}}/g, config.branding.contactEmail || "contact@company.com")
        .replace(/{{ADDRESS}}/g, config.branding.address || "123 Example St")
-       // Flagowane znaczniki AI
+       // AI-flagged template markers
        .replace(/{{HERO_TITLE}}/g, aiHeroTitle)
        .replace(/{{HERO_DESC}}/g, aiHeroDesc);
 
@@ -380,7 +380,7 @@ export async function runSetupAction(packages: string[], config: any) {
             const fileName = MODULE_FILES_MAP[modId].replace('.txt', `${isEn ? '-en' : '-pl'}.txt`);
             const className = modId.charAt(0).toUpperCase() + modId.slice(1); 
             
-            console.log(`[MDK SYSTEM] Pobieranie Modułu ${className} ze zdalnego repozytorium...`);
+            console.log(`[MDK SYSTEM] Fetching Module ${className} from remote repository...`);
             const componentsDir = path.join(process.cwd(), 'components', 'mdk');
             if (!fs.existsSync(componentsDir)) fs.mkdirSync(componentsDir, { recursive: true });
 
@@ -396,7 +396,7 @@ export async function runSetupAction(packages: string[], config: any) {
                 try {
                     code = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', fileName), 'utf-8');
                 } catch {
-                    code = `export default function ${className}Crash() { return <div className="p-4 border border-red-500">MDK Registry Error: Moduł ${fileName} niedostępny.</div> }`;
+                    code = `export default function ${className}Crash() { return <div className="p-4 border border-red-500">MDK Registry Error: Module ${fileName} unavailable.</div> }`;
                 }
             }
 
@@ -406,8 +406,8 @@ export async function runSetupAction(packages: string[], config: any) {
 
             const meta = parseMdkMetadata(code);
             if (meta.dependencies?.length > 0) {
-                console.log(`[MDK] Autoinstalacja zależności dla ${className}: ${meta.dependencies.join(' ')}`);
-                try { await execAsync(`npm install ${meta.dependencies.join(' ')}`); } catch (e) {}
+                console.log(`[MDK] Auto-installing dependencies for ${className}: ${meta.dependencies.join(' ')}`);
+                try { await execAsync(`npm install ${meta.dependencies.join(' ')}`); } catch (e) { console.warn('[MDK] Dependency install warning:', e); }
             }
             code = code.replace(/\/\* MDK-METADATA[\s\S]*?\*\//, '').trim();
 
@@ -422,15 +422,15 @@ export async function runSetupAction(packages: string[], config: any) {
         }
     }
 
-    // 4.6. WSTRZYKIWANIE TYPOGRAFII I ANALITYKI DO layout.tsx
+    // 4.6. TYPOGRAPHY AND ANALYTICS INJECTION INTO layout.tsx
     if (config.branding.typography || config.branding.analyticsId || config.branding.selectedPackages?.includes('sonner')) {
-        console.log(`[MDK SYSTEM] Modyfikacja pliku app/layout.tsx (Typografia: ${config.branding.typography}, Analytics: ${config.branding.analyticsId ? 'TAK' : 'NIE'})`);
+        console.log(`[MDK SYSTEM] Modifying app/layout.tsx (Typography: ${config.branding.typography}, Analytics: ${config.branding.analyticsId ? 'YES' : 'NO'})`);
         try {
             const layoutPath = path.join(process.cwd(), 'app', 'layout.tsx');
             if (fs.existsSync(layoutPath)) {
                 let layoutFile = fs.readFileSync(layoutPath, 'utf-8');
                 
-                // Analityka Pixel/GA4
+                // Analytics Pixel/GA4
                 if (config.branding.analyticsId) {
                     const trackingScript = `\n        {/* MDK Analytics Injection */}\n        <script async src="https://www.googletagmanager.com/gtag/js?id=${config.branding.analyticsId}"></script>\n        <script dangerouslySetInnerHTML={{ __html: \`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${config.branding.analyticsId}');\` }} />\n`;
                     layoutFile = layoutFile.replace('<body', `${trackingScript}\n      <body`);
@@ -462,15 +462,15 @@ export async function runSetupAction(packages: string[], config: any) {
                 }
                 
                 fs.writeFileSync(layoutPath, layoutFile);
-                console.log(`[MDK SYSTEM] Sukces nadpisywania layout.tsx.`);
+                console.log(`[MDK SYSTEM] Successfully overwrote layout.tsx.`);
             }
         } catch (e) {
-            console.error(`[MDK SYSTEM] Błąd przy modyfikacji layout.tsx:`, e);
+            console.error(`[MDK SYSTEM] Error modifying layout.tsx:`, e);
         }
     }
 
     if (appendedComponents) {
-       // Podmieniamy nagłówki importów
+       // Prepend import headers
        compiledCode = appendedImports + compiledCode;
        // If template has no explicit <main>, trying to fit into the most logical penultimate container
        compiledCode = compiledCode.replace('</main>', `${appendedComponents}\n        </main>`);
@@ -485,16 +485,16 @@ export async function runSetupAction(packages: string[], config: any) {
     // 5. Create .env.local for beginners (Flawless keys generation)
     if (config.branding.supabaseUrl || config.branding.supabaseAnonKey) {
         console.log(`[MDK SYSTEM] Generating .env.local environment with API keys...`)
-        let envContent = `# Automatycznie wygenerowane przez MDK Setup Wizard\n`
+        let envContent = `# Automatically generated by MDK Setup Wizard\n`
         envContent += `NEXT_PUBLIC_SUPABASE_URL="${config.branding.supabaseUrl || ''}"\n`
         envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY="${config.branding.supabaseAnonKey || ''}"\n`
         
         if (config.branding.supabaseServiceRole) {
-            envContent += `\n# Tajny klucz serwerowy\nSUPABASE_SERVICE_ROLE_KEY="${config.branding.supabaseServiceRole}"\n`
+            envContent += `\n# Secret server key\nSUPABASE_SERVICE_ROLE_KEY="${config.branding.supabaseServiceRole}"\n`
         }
         
         if (config.branding.aiKey) {
-            envContent += `\n# Klucz autoryzacji do wprowadzania promptów\nGEMINI_API_KEY="${config.branding.aiKey}"\n`
+            envContent += `\n# AI prompt authorization key\nGEMINI_API_KEY="${config.branding.aiKey}"\n`
         }
         
         fs.writeFileSync(path.join(process.cwd(), '.env.local'), envContent)
@@ -514,7 +514,7 @@ export async function runSetupAction(packages: string[], config: any) {
     
     return { success: true }
   } catch (error: any) {
-    console.error("[Molenda CLI] Krytyczny błąd instalatora Node.js:", error)
-    return { error: error.message || "Wystąpił błąd egzekucji polecenia powłoki w Node.js." }
+    console.error("[Molenda CLI] Critical Node.js installer error:", error)
+    return { error: error.message || "An error occurred during Node.js shell command execution." }
   }
 }

@@ -81,8 +81,20 @@ mdk/
 │   ├── builder/                # Block registry & presets
 │   ├── store/                  # Zustand state management
 │   └── supabase/               # SSR client, middleware, server utils
-└── scripts/                    # Build & patch utilities
+└── scripts/                    # Build & patch utilities (`mdk.ts`)
 ```
+
+---
+
+## 🛠️ MDK CLI Tool
+
+MDK includes a powerful TypeScript-based CLI to manage your project after the initial setup:
+
+```bash
+npm run mdk -- --help    # Show all available commands
+npm run mdk add [module] # Download and install a new module from the registry
+```
+
 
 ---
 

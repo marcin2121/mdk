@@ -6,7 +6,7 @@ import { NextResponse, type NextRequest } from 'next/server'
  * Injected as the main Next.js Middleware to protect routes at the Edge level.
  */
 export async function updateSession(request: NextRequest) {
-  // Przejmujemy natywne Next.js requests
+  // Intercept native Next.js requests
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -42,7 +42,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
   const isAdminRoute = request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/admin')
 
-  // Odrzucenie intruza ze strefy CMS z zachowaniem 301 do logowania
+  // Reject intruder from CMS zone with 301 redirect to login
   if (isAdminRoute && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'

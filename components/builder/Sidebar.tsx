@@ -24,7 +24,7 @@ export default function Sidebar() {
                  activeTab === "blocks" ? "border-[#f97316] text-white" : "border-transparent text-zinc-500 hover:text-white"
               }`}
            >
-              Klocki
+              Blocks
            </button>
            <button 
               onClick={() => setActiveTab("layers")}
@@ -32,7 +32,7 @@ export default function Sidebar() {
                  activeTab === "layers" ? "border-[#f97316] text-white" : "border-transparent text-zinc-500 hover:text-white"
               }`}
            >
-              Warstwy
+              Layers
            </button>
            {builderMode === "component" && (
              <button 
@@ -41,7 +41,7 @@ export default function Sidebar() {
                    activeTab === "variables" ? "border-[#f97316] text-white" : "border-transparent text-zinc-500 hover:text-white"
                 }`}
              >
-                Zmienne
+                Variables
              </button>
            )}
         </div>

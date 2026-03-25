@@ -141,8 +141,20 @@ mdk/
 │   ├── actions/                # Czyste Server Actions weryfikujące formularze ramy
 │   ├── actions/install-module.ts # Skrypty asynchronicznego dociągania dodatków na żądanie
 │   └── actions/setup-wizard.ts # Logika synchronizacji z mdk-registry i iniekcji kodu
-└── .env.example                # Zbiór wymaganych kluczy URL dla wrapperów
+└── scripts/                    # Narzędzia CLI i skrypty pomocnicze (`mdk.ts`)
 ```
+
+---
+
+### 🛠️ MDK CLI Tool
+
+MDK zawiera potężne narzędzie CLI oparte na TypeScript, które pozwala zarządzać projektem po zakończeniu wstępnej konfiguracji:
+
+```bash
+npm run mdk -- --help    # Pokaż wszystkie dostępne komendy
+npm run mdk add [modul]  # Pobierz i zainstaluj nowy moduł z rejestru
+```
+
 
 ---
 

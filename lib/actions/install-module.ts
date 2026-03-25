@@ -31,7 +31,7 @@ export async function installMdkModule(modId: string) {
     }
 
     const fileName = MODULE_FILES_MAP[modId]
-    if (!fileName) return { error: "Moduł nie istnieje w MDK Registry." }
+    if (!fileName) return { error: "Module does not exist in MDK Registry." }
 
     const className = modId.charAt(0).toUpperCase() + modId.slice(1)
     const componentsDir = path.join(process.cwd(), 'components', 'mdk')
@@ -39,7 +39,7 @@ export async function installMdkModule(modId: string) {
 
     const destPath = path.join(componentsDir, `${className}.tsx`)
     if (fs.existsSync(destPath)) {
-        return { success: true, message: "Moduł był już zachowany lokalnie." }
+        return { success: true, message: "Module was already saved locally." }
     }
 
     try {
@@ -48,13 +48,13 @@ export async function installMdkModule(modId: string) {
         if (res.ok) {
             code = await res.text()
         } else {
-            // Fallback (jeśli folder registry obok jest rozpakowany)
+            // Fallback (if local registry folder is unpacked alongside)
             code = fs.readFileSync(path.join(process.cwd(), '..', 'mdk-registry', 'components', fileName), 'utf-8')
         }
 
         const meta = parseMdkMetadata(code)
         if (meta.dependencies && meta.dependencies.length > 0) {
-            // Zainstaluj dependencje Next.js
+            // Install Next.js dependencies
             try {
                 await execAsync(`npm install ${meta.dependencies.join(' ')}`, { cwd: process.cwd() })
             } catch (instErr) {
@@ -68,6 +68,6 @@ export async function installMdkModule(modId: string) {
         return { success: true }
     } catch (e: any) {
         console.error("MDK Module Error:", e)
-        return { error: `Nie udało się pobrać kodu: ${e.message}` }
+        return { error: `Failed to download code: ${e.message}` }
     }
 }

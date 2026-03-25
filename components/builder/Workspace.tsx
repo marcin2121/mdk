@@ -73,7 +73,7 @@ const CanvasNodeContainer = ({ node, children, isSelected, onClick, isContainer,
           node.bindings && (node.bindings.text || node.bindings.label) && builderMode === "component" ? (
              <span className="text-[#f97316] font-mono font-bold">{`{ ${node.bindings.text || node.bindings.label} }`}</span>
           ) : (
-             node.props.text || node.props.label || `[Pusty ${node.type}]`
+             node.props.text || node.props.label || `[Empty ${node.type}]`
           )
        ) : children}
     </div>

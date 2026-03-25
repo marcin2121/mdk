@@ -15,7 +15,7 @@ export default function VariablesPanel() {
      e.preventDefault();
      if (!name.trim()) return;
 
-     // Zabezpieczenie przed specyficznymi znakami
+     // Sanitize special characters
      const safeName = name.replace(/[^a-zA-Z0-9_]/g, "");
      addVariable(safeName, type, defaultValue);
 

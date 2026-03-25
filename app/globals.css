@@ -39,7 +39,7 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* Definicja semantycznych tokenów przestrzeni barw dla jasnego i ciemnego motywu.
+/* Semantic color space token definitions for light and dark themes.
 */
 :root {
   --background: 0 0% 100%;

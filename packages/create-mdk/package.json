@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Next.js Starter Kit with built-in GUI Setup Wizard",
   "bin": {
-    "create-mdk": "./index.js"
+    "create-mdk": "./index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
