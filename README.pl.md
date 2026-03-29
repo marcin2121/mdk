@@ -15,7 +15,7 @@ Designed for immediately building secure, full-stack **Supabase SSR** applicatio
 
 ### 🚀 Key Feature: The Visual Setup Interceptor (GUI Builder)
 
-We have transformed the web application setup process (SaaS, Analytics, Portfolios) into a direct, visual experience. On first run, the **Edge Middleware** intercepts requests and boots into an immersive *"Setup Wizard"* instead of just loading a blank page.
+We have transformed the web application setup process (SaaS, Analytics, Portfolios) into a direct, visual experience. On first run, the **Edge Proxy** intercepts requests and boots into an immersive *"Setup Wizard"* instead of just loading a blank page.
 
 #### Features of the Interface:
 - **🤖 Real-Time AI Generation (V1 Gemini/GPT):** Simply toggle "AI Copywriting" and the installer generates contextual SEO titles, descriptive paragraphs, and Call to Actions customized for your business vertical in real time.
@@ -36,7 +36,7 @@ We have transformed the web application setup process (SaaS, Analytics, Portfoli
 ### 🛠️ Tech Stack
 
 * **Framework:** Next.js 16+ (React 19, Server Components Router)
-* **Auth & Data Layer:** `@supabase/ssr` with direct Edge Middleware mapping
+* **Auth & Data Layer:** `@supabase/ssr` with direct Edge Proxy mapping
 * **Styling Ecosystem:** Tailwind CSS v4
 * **Asynchronous Handlers:** Zod Schemas enforcing robust validation pipelines defending workflows inside Server Actions contexts.
 * **Client UI standards:** Framer Motion, Radix Primitives
@@ -103,7 +103,7 @@ Ewolucja standardowych boilerplate'ów na rynkach zachodnich. **MDK** (Molenda D
 
 ### 🚀 Koronna Funkcja: The Setup Interceptor (GUI CLI)
 
-Zanurzyliśmy proces budowania aplikacji webowych (SaaS, Wizytówki) w nowej, wizualnej pętli instalacyjnej. Gdy uruchomisz projekt po raz pierwszy, **Edge Middleware / Layout zablokuje wejście** i uruchomi dla Ciebie graficzny *"Setup Wizard"*.
+Zanurzyliśmy proces budowania aplikacji webowych (SaaS, Wizytówki) w nowej, wizualnej pętli instalacyjnej. Gdy uruchomisz projekt po raz pierwszy, **Edge Proxy / Layout zablokuje wejście** i uruchomi dla Ciebie graficzny *"Setup Wizard"*.
 
 #### Możliwości Instalatora Graficznego w przeglądarce:
 - **🤖 Generatywne AI (Gemini / GPT):** Za pomocą jednego suwaka zmuszasz Sztuczną Inteligencję do wyplucia gotowego SEO-copywritingu (Tytuły Hero, opisy cta itp.) sprofilowanego pod Twoją branżę w locie.
@@ -123,7 +123,7 @@ Zanurzyliśmy proces budowania aplikacji webowych (SaaS, Wizytówki) w nowej, wi
 ### 🛠️ Stos Technologiczny
 
 * **Framework:** Next.js 16+ (React 19, Server Components)
-* **Weryfikacja danych ciasteczkowych:** `@supabase/ssr` (Edge Middleware)
+* **Weryfikacja danych ciasteczkowych:** `@supabase/ssr` (Edge Proxy)
 * **Wizualna powłoka UI:** Tailwind CSS v4 + Framer Motion
 * **Wielostanowa Walidacja End-to-End:** Zod (chroniący Server Actions przez błędnymi wstrzyknięciami)
 

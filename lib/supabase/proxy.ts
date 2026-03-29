@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 /**
  * Key logic handling cookie lifecycle and token refresh.
- * Injected as the main Next.js Middleware to protect routes at the Edge level.
+ * Injected as the main Next.js Proxy to protect routes at the Edge level.
  */
 export async function updateSession(request: NextRequest) {
   // Intercept native Next.js requests
