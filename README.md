@@ -6,7 +6,7 @@
 
 ![MDK Setup Wizard Walkthrough](./docs/walkthrough.webp)
 
-MDK (Molenda Development Kit) is an open-source Next.js starter kit that replaces the traditional "clone and manually edit 20 files" workflow with a **built-in visual Setup Wizard**. On first run, Edge Middleware intercepts the request and boots an immersive graphical installer — right in your browser.
+MDK (Molenda Development Kit) is an open-source Next.js starter kit that replaces the traditional "clone and manually edit 20 files" workflow with a **built-in visual Setup Wizard**. On first run, Edge Proxy intercepts the request and boots an immersive graphical installer — right in your browser.
 
 No CLI prompts. No YAML configs. Just a beautiful UI that builds your app for you.
 
@@ -31,7 +31,7 @@ Visit `http://localhost:3000` → the Setup Wizard takes over automatically.
 | **🎨 Visual Theme Editor** | Pick colors, typography, and layout tokens with a live preview iframe powered by React HMR |
 | **🤖 AI Copywriting** | Toggle AI generation (Gemini / GPT) to produce SEO titles, hero text, and CTAs for your industry |
 | **📦 Module Registry** | Install production-ready components (Chatbot, Calculator, FAQ, Pricing) from `mdk-registry` — async npm install in the background |
-| **🔐 Supabase Integration** | Paste your API keys → auto-generates `.env.local` with full SSR auth, RLS policies, and Edge Middleware |
+| **🔐 Supabase Integration** | Paste your API keys → auto-generates `.env.local` with full SSR auth, RLS policies, and Edge Proxy |
 | **📐 Template Selection** | Choose from curated templates: SaaS, Portfolio, Agency, Dashboard, E-commerce |
 
 ---
@@ -54,7 +54,7 @@ Beyond the Setup Wizard, MDK includes a drag-and-drop page builder at `/builder`
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 16 (React 19, App Router, Server Components) |
-| Auth & Data | Supabase SSR (`@supabase/ssr`) with Edge Middleware |
+| Auth & Data | Supabase SSR (`@supabase/ssr`) with Edge Proxy |
 | Styling | Tailwind CSS v4 |
 | State | Zustand |
 | Drag & Drop | `@dnd-kit/core` |
@@ -80,7 +80,7 @@ mdk/
 │   ├── actions/                # Server Actions (publish, AI gen, auth)
 │   ├── builder/                # Block registry & presets
 │   ├── store/                  # Zustand state management
-│   └── supabase/               # SSR client, middleware, server utils
+│   └── supabase/               # SSR client, proxy, server utils
 └── scripts/                    # Build & patch utilities (`mdk.ts`)
 ```
 

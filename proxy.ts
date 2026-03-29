@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server'
-import { updateSession } from './lib/supabase/middleware'
+import { updateSession } from './lib/supabase/proxy'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Forward request to the integrated session engine described in lib/
   return await updateSession(request)
 }
