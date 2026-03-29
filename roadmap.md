@@ -6,25 +6,10 @@ Nie boilerplate. Nie page builder. Starter Kit który się sam konfiguruje przez
 
 ---
 
-## 🔴 P0 — Warunek wejścia (bez tego 0 gwiazdek)
-
-### 1. Anglicyzacja kodu (1-2 dni)
-- Komentarze, zmienne, UI → EN
-- README wyłącznie EN (PL jako `README.pl.md`)
-- Setup Wizard UI → EN domyślny, PL jako i18n
-
-### 2. Usunięcie Python patch scripts (1 dzień)
-- `scripts/*.py` → jeden czysty Node.js CLI lub wyrzucić
-- Patch-scripty regexowe = śmierć maintainability
-
-### 3. CI + Testy (1 dzień)
-- GitHub Actions: `build` + `lint`
-- 3-5 unit testów na builder-store
-- Badge ✅ Build Passing w README
-
-### 4. Licencja + CONTRIBUTING.md
-- MIT
-- Prosty przewodnik kontrybuowania
+## 🔴 P0 — Warunek wejścia (ZROBIONE ✅)
+10. Usunięcie regex-based patch-scriptów (ZROBIONE ✅)
+11. CLI: `npx create-mdk` (ZROBIONE ✅)
+12. Plugin System: `mdk add` (ZROBIONE ✅)
 
 ---
 

@@ -35,7 +35,7 @@ We have transformed the web application setup process (SaaS, Analytics, Portfoli
 
 ### 🛠️ Tech Stack
 
-* **Framework:** Next.js 15+ (React 19, Server Components Router)
+* **Framework:** Next.js 16+ (React 19, Server Components Router)
 * **Auth & Data Layer:** `@supabase/ssr` with direct Edge Middleware mapping
 * **Styling Ecosystem:** Tailwind CSS v4
 * **Asynchronous Handlers:** Zod Schemas enforcing robust validation pipelines defending workflows inside Server Actions contexts.
@@ -122,7 +122,7 @@ Zanurzyliśmy proces budowania aplikacji webowych (SaaS, Wizytówki) w nowej, wi
 
 ### 🛠️ Stos Technologiczny
 
-* **Framework:** Next.js 15+ (React 19, Server Components)
+* **Framework:** Next.js 16+ (React 19, Server Components)
 * **Weryfikacja danych ciasteczkowych:** `@supabase/ssr` (Edge Middleware)
 * **Wizualna powłoka UI:** Tailwind CSS v4 + Framer Motion
 * **Wielostanowa Walidacja End-to-End:** Zod (chroniący Server Actions przez błędnymi wstrzyknięciami)

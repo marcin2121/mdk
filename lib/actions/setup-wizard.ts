@@ -4,6 +4,8 @@ import { exec } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
+import { Project, SyntaxKind } from 'ts-morph'
+import { addImport } from '../utils/ast-utils'
 
 const execAsync = promisify(exec)
 
@@ -422,29 +424,42 @@ export async function runSetupAction(packages: string[], config: any) {
         }
     }
 
-    // 4.6. TYPOGRAPHY AND ANALYTICS INJECTION INTO layout.tsx
+    // 4.6. TYPOGRAPHY AND ANALYTICS INJECTION INTO layout.tsx (AST-BASED)
     if (config.branding.typography || config.branding.analyticsId || config.branding.selectedPackages?.includes('sonner')) {
-        console.log(`[MDK SYSTEM] Modifying app/layout.tsx (Typography: ${config.branding.typography}, Analytics: ${config.branding.analyticsId ? 'YES' : 'NO'})`);
+        console.log(`[MDK SYSTEM] Modifying app/layout.tsx using AST (Typography: ${config.branding.typography}, Analytics: ${config.branding.analyticsId ? 'YES' : 'NO'})`);
         try {
             const layoutPath = path.join(process.cwd(), 'app', 'layout.tsx');
             if (fs.existsSync(layoutPath)) {
-                let layoutFile = fs.readFileSync(layoutPath, 'utf-8');
-                
-                // Analytics Pixel/GA4
+                const project = new Project();
+                const sourceFile = project.addSourceFileAtPath(layoutPath);
+
+                // Analytics Pixel/GA4 Injection into <body>
                 if (config.branding.analyticsId) {
                     const trackingScript = `\n        {/* MDK Analytics Injection */}\n        <script async src="https://www.googletagmanager.com/gtag/js?id=${config.branding.analyticsId}"></script>\n        <script dangerouslySetInnerHTML={{ __html: \`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${config.branding.analyticsId}');\` }} />\n`;
-                    layoutFile = layoutFile.replace('<body', `${trackingScript}\n      <body`);
+                    const body = sourceFile.getDescendantsOfKind(SyntaxKind.JsxElement)
+                        .find(node => node.getOpeningElement().getTagNameNode().getText() === "body");
+                    if (body) {
+                        const closingBody = body.getClosingElement();
+                        if (closingBody) {
+                            sourceFile.insertText(closingBody.getStart(), trackingScript);
+                        }
+                    }
                 }
 
                 // Sonner Toaster
                 if (config.branding.selectedPackages?.includes('sonner')) {
-                    if (!layoutFile.includes('<Toaster')) {
-                        layoutFile = layoutFile.replace(`import "./globals.css";`, `import "./globals.css";\nimport { Toaster } from "sonner";`);
-                        layoutFile = layoutFile.replace('{children}', `{children}\n        <Toaster position="top-right" theme="dark" />`);
+                    addImport(sourceFile, "sonner", ["Toaster"]);
+                    const themeProvider = sourceFile.getDescendantsOfKind(SyntaxKind.JsxElement)
+                        .find(node => node.getOpeningElement().getTagNameNode().getText() === "ThemeProvider");
+                    if (themeProvider && !themeProvider.getText().includes("<Toaster")) {
+                        const closingThemeProvider = themeProvider.getClosingElement();
+                        if (closingThemeProvider) {
+                            sourceFile.insertText(closingThemeProvider.getStart(), `\n        <Toaster position="top-right" theme="dark" />`);
+                        }
                     }
                 }
 
-                // Typografia
+                // Typography
                 if (config.branding.typography && config.branding.typography !== 'geist') {
                     let fontImport = '';
                     let variableName = '';
@@ -454,18 +469,45 @@ export async function runSetupAction(packages: string[], config: any) {
                     if (config.branding.typography === 'outfit') { fontImport = 'Outfit'; variableName = 'outfit'; }
                     
                     if (fontImport) {
-                        layoutFile = layoutFile.replace(`import { Geist, Geist_Mono } from "next/font/google";`, `import { ${fontImport} } from "next/font/google";`);
-                        layoutFile = layoutFile.replace(/const geistSans = Geist\(\{\s*variable: "--font-geist-sans",\s*subsets: \["latin"\],\s*\}\);\s*const geistMono = Geist_Mono\(\{\s*variable: "--font-geist-mono",\s*subsets: \["latin"\],\s*\}\);/g, `const ${variableName} = ${fontImport}({ subsets: ['latin'], variable: '--font-${variableName}' });`);
-                        layoutFile = layoutFile.replace(/className={\`\$\{geistSans\.variable\} \$\{geistMono\.variable\}/g, `className={\`\$\{${variableName}.variable\}`);
-                        layoutFile = layoutFile.replace(/\| Niezwykle szybkie strony internetowe/g, `| ${config.branding.companyName || 'MDK'}`);
+                        // Update Font Import
+                        addImport(sourceFile, "next/font/google", [fontImport]);
+                        
+                        // Update Variable Declaration
+                        const fontVar = sourceFile.getVariableDeclaration(node => node.getName() === "geistSans");
+                        if (fontVar) {
+                            fontVar.rename(variableName);
+                            fontVar.setInitializer(`${fontImport}({ subsets: ['latin'], variable: '--font-${variableName}' })`);
+                        }
+                        
+                        // Update Body ClassName
+                        const body = sourceFile.getDescendantsOfKind(SyntaxKind.JsxOpeningElement)
+                            .find(node => node.getTagNameNode().getText() === "body");
+                        if (body) {
+                            const classNameAttr = body.getAttribute("className");
+                            if (classNameAttr && classNameAttr.isKind(SyntaxKind.JsxAttribute)) {
+                                classNameAttr.setInitializer(`{\`\$\{${variableName}.variable\} antialiased\`}`);
+                            }
+                        }
                     }
                 }
                 
-                fs.writeFileSync(layoutPath, layoutFile);
-                console.log(`[MDK SYSTEM] Successfully overwrote layout.tsx.`);
+                // Update Metadata Title
+                const metadataVar = sourceFile.getVariableDeclaration("metadata");
+                if (metadataVar) {
+                    const initializer = metadataVar.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression);
+                    if (initializer) {
+                        const titleProp = initializer.getProperty("title");
+                        if (titleProp && titleProp.isKind(SyntaxKind.PropertyAssignment)) {
+                            titleProp.setInitializer(`"Molenda Boilerplate | ${config.branding.companyName || 'MDK'}"`);
+                        }
+                    }
+                }
+
+                await sourceFile.save();
+                console.log(`[MDK SYSTEM] Successfully modified layout.tsx using AST.`);
             }
         } catch (e) {
-            console.error(`[MDK SYSTEM] Error modifying layout.tsx:`, e);
+            console.error(`[MDK SYSTEM] Error modifying layout.tsx with AST:`, e);
         }
     }
 

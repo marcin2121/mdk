@@ -1,0 +1,38 @@
+{
+  "name": "@mdk/cli",
+  "version": "0.1.0",
+  "description": "MDK Registry CLI - Add components to your Next.js project",
+  "bin": {
+    "mdk": "./dist/mdk.js"
+  },
+  "main": "./dist/mdk.js",
+  "types": "./dist/mdk.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup mdk.ts --format esm,cjs --clean",
+    "dev": "tsup mdk.ts --format esm,cjs --watch"
+  },
+  "keywords": [
+    "nextjs",
+    "mdk",
+    "registry",
+    "components"
+  ],
+  "author": "Marcin Molenda",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "prompts": "^2.4.2",
+    "picocolors": "^1.0.0",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2",
+    "@types/node": "^20.11.24",
+    "@types/fs-extra": "^11.0.4"
+  }
+}
