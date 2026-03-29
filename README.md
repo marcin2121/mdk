@@ -12,15 +12,19 @@ No CLI prompts. No YAML configs. Just a beautiful UI that builds your app for yo
 
 ---
 
-## 🚀 How It Works
+## 🚀 Quick Start
+
+The fastest way to start is using the **MDK CLI**:
 
 ```bash
-npx degit marcin2121/mdk my-app
-cd my-app && npm install
-npm run dev
+npx create-mdk my-app
 ```
 
-Visit `http://localhost:3000` → the Setup Wizard takes over automatically.
+**What it does:**
+1. Prompts you to pick a template (SaaS, Portfolio, Agency, etc.)
+2. Clones the latest MDK core
+3. Installs all dependencies
+4. Boots the **visual Setup Wizard** at `http://localhost:3000`
 
 ---
 
@@ -30,9 +34,9 @@ Visit `http://localhost:3000` → the Setup Wizard takes over automatically.
 |---------|-------------|
 | **🎨 Visual Theme Editor** | Pick colors, typography, and layout tokens with a live preview iframe powered by React HMR |
 | **🤖 AI Copywriting** | Toggle AI generation (Gemini / GPT) to produce SEO titles, hero text, and CTAs for your industry |
-| **📦 Module Registry** | Install production-ready components (Chatbot, Calculator, FAQ, Pricing) from `mdk-registry` — async npm install in the background |
+| **📦 Module Registry** | Install production-ready components (Chatbot, FAQ, Hero) from `mdk-registry` with **AST automatic injection**. |
 | **🔐 Supabase Integration** | Paste your API keys → auto-generates `.env.local` with full SSR auth, RLS policies, and Edge Proxy |
-| **📐 Template Selection** | Choose from curated templates: SaaS, Portfolio, Agency, Dashboard, E-commerce |
+| **📐 Template Selection** | Professional initialization via `npx create-mdk` with curated industry templates |
 
 ---
 
@@ -88,12 +92,16 @@ mdk/
 
 ## 🛠️ MDK CLI Tool
 
-MDK includes a powerful TypeScript-based CLI to manage your project after the initial setup:
+Manage your project after the initial setup with our dedicated CLI:
 
 ```bash
-npm run mdk -- --help    # Show all available commands
-npm run mdk add [module] # Download and install a new module from the registry
+# Add a component and inject it into page.tsx automatically using AST
+npx mdk add hero-section
 ```
+
+- **Remote Fetch**: Pulls from `mdk-registry`
+- **Dependency Map**: Auto-installs required NPM packages
+- **Smart Injection**: Uses `ts-morph` AST to add imports and Jsx tags to your files
 
 
 ---

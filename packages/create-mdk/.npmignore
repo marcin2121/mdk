@@ -1,0 +1,10 @@
+# Ignore source files and dev deps in published package
+node_modules
+index.ts
+tsconfig.json
+tsup.config.ts
+.npmignore
+.git
+.github
+*.test.ts
+*.test.tsx

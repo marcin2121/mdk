@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --clean",
     "dev": "tsup index.ts --format esm,cjs --watch",
+    "prepack": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
